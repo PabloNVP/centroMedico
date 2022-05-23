@@ -6,21 +6,16 @@ class CENTROMEDICO {
 	}
 
 	public static int LeerEntero() {
-		String linea = new String("");
+		int entero = 0;
+		
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			linea = br.readLine();
+			entero = Integer.parseInt(br.readLine());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		int ne = 0;
-		try {
-			ne = Integer.parseInt(linea);
-		} catch (Exception e) {
-		}
-		
-		return (ne);
+		return (entero);
 	}
 
 	public static String LeerCadena() {
@@ -31,8 +26,63 @@ class CENTROMEDICO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		double ne = 0;
+		
 		return (linea);
+	}
+	
+	public static void menuIngresoDeDatos() {
+		int opcion = 0;
+		
+		do {
+			ps("   ..............................................." + "\n");
+			ps("   :-: -I N G R E S O  D E  P A C I E N T E S- :-:" + "\n");
+			ps("   :-:.........................................:-:" + "\n");
+			ps("   :-: 1.  Datos del paciente                  :-:" + "\n");
+			ps("   :-: 2.  Situacion del paciente              :-:" + "\n");
+			ps("   :-: 3.  Datos del medico                    :-:" + "\n");
+			ps("   :-: 4.  VOLVER                              :-:" + "\n");
+			ps("   ..............................................." + "\n");
+			ps("   ....Elija la opcion deseada: ");
+
+			opcion = LeerEntero();
+
+			if (opcion == 1) 
+				ingresarPaciente();
+			else if(opcion == 2)
+				ingresarSituacionPaciente();
+			else if(opcion == 3)
+				ingresarMedico();
+			else if(opcion != 4)
+				ps("Debe digitar una opcion del menu" + "\n");
+
+		} while (opcion != 4);
+	}
+	
+	public static void menuInformes() {
+		int opcion;
+		
+		do {
+			ps("   ..............................................." + "\n");
+			ps("   :-:  C O N T R O L  D E  P A C I E N T E S  :-:" + "\n");
+			ps("   ..............................................." + "\n");
+			ps("   :-:           - I N F O R M E S -           :-:" + "\n");
+			ps("   :-:.........................................:-:" + "\n");
+			ps("   :-: 1. Listado de pacientes por medico      :-:" + "\n");
+			ps("   :-: 2. Enfermedades que atiende cada medico :-:" + "\n");
+			ps("   :-: 3. Anterior                             :-:" + "\n");
+			ps("   ..............................................." + "\n");
+			ps("   ....Elija la opcion deseada: ");
+			
+			opcion = LeerEntero();
+			
+			if(opcion == 1)
+				listarPacientesPorMedico();
+			else if(opcion == 2)
+				listarEnfermedadesPorMedico();
+			else if(opcion != 3)
+				ps("Seleccione una de las opciones del menu" + "\n");
+			
+		} while (opcion != 3);
 	}
 	
 	public static void ingresarPaciente() {
@@ -103,8 +153,7 @@ class CENTROMEDICO {
 	public static void ingresarMedico() {
 		try {
 			String codmed, nommed, espmed, op;
-			DataOutputStream datomed = null;
-			datomed = new DataOutputStream(new FileOutputStream("C:\\datomed.txt"));
+			DataOutputStream datomed = new DataOutputStream(new FileOutputStream("C:\\datomed.txt"));
 			
 			do {
 				ps("   ....................................................." + "\n");
@@ -201,17 +250,69 @@ class CENTROMEDICO {
 			//mensaje de error
 		}
 	}
+	
+	@SuppressWarnings("resource")
+	public static void listarEnfermedadesPorMedico() {
+		String codtem;
+		int sw = 0, sw1 = 0;
+		String codm = "", codme = "", enfp = "", nomm = "", espm = "", codp; // variables usadas en la lectura de datos
+		
+		ps("Digite el codigo del medico que desea consultar: ");
+		codtem = LeerCadena();
+
+		DataInputStream datomed = null;
+		try {
+			datomed = new DataInputStream(new FileInputStream("C:\\datomed.txt"));
+			sw1 = 1;
+		} catch (FileNotFoundException e1) {
+			sw=0;
+		}
+		
+		while (sw1 != 0) {
+			try {
+				codm = datomed.readUTF();
+				nomm = datomed.readUTF();
+				espm = datomed.readUTF();
+	
+				 // compara el codigo digitado
+				// con el codigo del medico de la
+				// tabla "datomed"
+				if (codm.equals(codtem)){
+					ps("El medico " + nomm + " trata las siguientes enfermedades:" + "\n");
+	
+					DataInputStream situpac = new DataInputStream(
+							new FileInputStream("C:\\situpac.txt"));
+	
+					sw = 1;
+					while (sw != 0) {
+						try {
+							codp = situpac.readUTF();
+							codme = situpac.readUTF();
+							enfp = situpac.readUTF();
+	
+							// compara el codigo del medico
+							// de la tabla "datomed"
+							// con el codigo del medico en la
+							// tabla "situpac"
+							if (codtem.equals(codme)){
+								ps(">>>> " + enfp + "\n");
+							}
+						} catch (EOFException e) {
+							sw = 0;
+						}
+					}
+				}
+			} catch (IOException e) {
+				sw1 = 0;
+			}
+		}
+	}
 
 	public static void main(String args[]) throws Exception {
-		//String op = "";
-		int sw = 0, sw1 = 0;
-		int op1, op2, op3; // variables de selecci�n usadas en los diferentes men�s
-		//String codpac, nompac, op; -> IngresarPaciente
-		String codm = "", codme = "", enfp = "", nomm = "", espm = ""; // variables usadas en la lectura de datos																													
-		String codtem; // variables auxiliares temporales
+		// variables de seleccion usadas en los diferentes menus.
+		int opcion; 
 
 		do {
-			op1 = 0;
 			ps("   .............................................." + "\n");
 			ps("   :-:           CENTRO MEDICO                :-:" + "\n");
 			ps("   :-:   >>>>     U N L A M   <<<<            :-:" + "\n");
@@ -222,128 +323,18 @@ class CENTROMEDICO {
 			ps("   :-: 3.  Salir                              :-:" + "\n");
 			ps("   .............................................." + "\n");
 			ps("   ....Elija la opcion deseada: ");
-			// ps("\n");
-			op1 = LeerEntero();
-			if (op1 < 1 || op1 > 3) {
+			
+			opcion = LeerEntero();
+
+			//Seleccion menu ingreso de pacientes
+			if (opcion == 1) 
+				menuIngresoDeDatos();
+			else if(opcion == 2)  // Seleccion menu informes
+				menuInformes();
+			else if(opcion != 3)
 				ps("Debe digitar una opcion del menu" + "\n");
-			}
-
-			if (op1 == 1) // seleci�n ingreso de pacientes
-			{
-
-				do {
-
-					ps("   ..............................................." + "\n");
-					ps("   :-: -I N G R E S O  D E  P A C I E N T E S- :-:" + "\n");
-					ps("   :-:.........................................:-:" + "\n");
-					ps("   :-: 1.  Datos del paciente                  :-:" + "\n");
-					ps("   :-: 2.  Situacion del paciente              :-:" + "\n");
-					ps("   :-: 3.  Datos del medico                    :-:" + "\n");
-					ps("   :-: 4.  VOLVER                              :-:" + "\n");
-					ps("   ..............................................." + "\n");
-					ps("   ....Elija la opcion deseada: ");
-
-					op2 = LeerEntero();
-
-					if (op2 < 1 || op2 > 4) {
-						ps("Debe digitar una opcion del menu" + "\n");
-					}
-
-					switch (op2) {
-						case 1: // ingreso de datos, datos del paciente
-							ingresarPaciente();
-							break;
-						
-						case 2:  // ingreso de datos, situacion del paciente
-							ingresarSituacionPaciente();
-							break;
-
-						case 3: // ingreso de datos, datos del medico
-							ingresarMedico();
-							break;
-					}
-				} while (op2 != 4);
-			} else {
-				if (op1 == 2) // seleci�n informes
-				{
-
-					do {
-						ps("   ..............................................." + "\n");
-						ps("   :-:  C O N T R O L  D E  P A C I E N T E S  :-:" + "\n");
-						ps("   ..............................................." + "\n");
-						ps("   :-:           - I N F O R M E S -           :-:" + "\n");
-						ps("   :-:.........................................:-:" + "\n");
-						ps("   :-: 1. Listado de pacientes por medico      :-:" + "\n");
-						ps("   :-: 2. Enfermedades que atiende cada medico :-:" + "\n");
-						ps("   :-: 3. Anterior                             :-:" + "\n");
-						ps("   ..............................................." + "\n");
-						ps("   ....Elija la opcion deseada: ");
-						op2 = LeerEntero();
-						if (op2 < 1 || op2 > 3) {
-							ps("Seleccione una de las opciones del menu" + "\n");
-						}
-
-						switch (op2) {
-							case 1:
-								listarPacientesPorMedico();
-								break;
-
-						case 2:
-
-							ps("Digite el codigo del medico que desea consultar: ");
-							codtem = LeerCadena();
-
-							DataInputStream datomed = null;
-							datomed = new DataInputStream(new FileInputStream("C:\\datomed.txt"));
-
-							sw1 = 1;
-							while (sw1 != 0) {
-								try {
-									codm = datomed.readUTF();
-									nomm = datomed.readUTF();
-									espm = datomed.readUTF();
-
-									if (codm.equals(codtem)) // compara el codigo digitado
-																// con el codigo del medico de la
-																// tabla "datomed"
-									{
-										ps("El medico " + nomm + " trata las siguientes enfermedades:" + "\n");
-
-										DataInputStream situpac = null;
-										situpac = new DataInputStream(new FileInputStream("C:\\situpac.txt"));
-
-										sw = 1;
-										while (sw != 0) {
-											try {
-												codp = situpac.readUTF();
-												codme = situpac.readUTF();
-												enfp = situpac.readUTF();
-
-												if (codtem.equals(codme)) // compara el codigo del medico
-																			// de la tabla "datomed"
-																			// con el codigo del medico en la
-																			// tabla "situpac"
-
-												{
-													ps(">>>> " + enfp + "\n");
-												}
-											} catch (EOFException e) {
-												sw = 0;
-											}
-										}
-									}
-								} catch (EOFException e) {
-									sw1 = 0;
-								}
-							}
-							break;
-						}
-
-					} while (op2 != 3);
-
-				}
-			}
-		} while (op1 != 3);
+			
+		} while (opcion != 3);
 
 	}
 }
