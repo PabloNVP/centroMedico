@@ -1,6 +1,12 @@
+package controlador.centroMedico;
 import java.io.*;
 
-class CENTROMEDICO {
+import ventana.centroMedico.VentanaConectar;
+
+public class CENTROMEDICO {
+	public static int ALTO = 640;
+	public static int ANCHO = 480;
+	
 	public static void ps(String x) {
 		System.out.print(x);
 	}
@@ -88,9 +94,7 @@ class CENTROMEDICO {
 	public static void ingresarPaciente() {
 		try {
 			String codpac, nompac, op;
-			DataOutputStream datopac = null;
-			
-			datopac = new DataOutputStream(new FileOutputStream("C:\\datopac.txt"));
+			DataOutputStream datopac = new DataOutputStream(new FileOutputStream("C:\\datopac.txt"));
 			
 			do {
 				ps("   ..............................................." + "\n");
@@ -100,13 +104,12 @@ class CENTROMEDICO {
 				ps("Digite el codigo del paciente: ");
 				codpac = LeerCadena();
 				datopac.writeUTF(codpac);
+				
 				ps("Digite el nombre del paciente: ");
 				nompac = LeerCadena();
-
 				datopac.writeUTF(nompac);
 
 				ps("Desea ingresar otro paciente? S/N" + "\n");
-
 				op = LeerCadena();
 
 			} while (op.equals("S") || op.equals("s"));
@@ -120,8 +123,7 @@ class CENTROMEDICO {
 	public static void ingresarSituacionPaciente() {
 		try {
 			String codp, codm, enfpac, op;
-			DataOutputStream situpac = null;
-			situpac = new DataOutputStream(new FileOutputStream("C:\\situpac.txt"));
+			DataOutputStream situpac = new DataOutputStream(new FileOutputStream("C:\\situpac.txt"));
 			
 			do {
 				ps("   ....................................................." + "\n");
@@ -131,9 +133,11 @@ class CENTROMEDICO {
 				ps("Digite el codigo del paciente: ");
 				codp = LeerCadena();
 				situpac.writeUTF(codp);
+				
 				ps("Digite el codigo del medico: ");
 				codm = LeerCadena();
 				situpac.writeUTF(codm);
+				
 				ps("Digite el diagnostico del medico: ");
 				enfpac = LeerCadena();
 				situpac.writeUTF(enfpac);
@@ -187,69 +191,68 @@ class CENTROMEDICO {
 	
 	@SuppressWarnings("resource")
 	public static void listarPacientesPorMedico(){
-		try {
-			int sw = 0, sw1 = 0;
-			String codtem, codm = "", nomm = "", espm, codp, codme, enfp, codpa, nompa;
+		int sw = 0, sw1 = 0;
+		String codtem, codm = "", nomm = "", espm, codp, codme, enfp, codpa, nompa;
 			
-			ps("Digite el codigo del medico que desea consultar: ");
-			codtem = LeerCadena();
+		ps("Digite el codigo del medico que desea consultar: ");
+		codtem = LeerCadena();
 
-			DataInputStream datomed = null;
-			datomed = new DataInputStream(new FileInputStream("C:\\datomed.txt"));
+		sw = 1;
+		while (sw != 0) {
+			try {
+				DataInputStream datomed = null;
+				datomed = new DataInputStream(new FileInputStream("C:\\datomed.txt"));
+				
+				codm = datomed.readUTF();
+				nomm = datomed.readUTF();
+				espm = datomed.readUTF();
+			} catch (IOException e) {
+				sw = 0;
+			}
 
-			sw = 1;
-			while (sw != 0) {
-				try {
-					codm = datomed.readUTF();
-					nomm = datomed.readUTF();
-					espm = datomed.readUTF();
-				} catch (EOFException e) {
-					sw = 0;
-				}
+			// compara el codigo extraido de la tabla "datomed" con el codigo digitado
+			if (codm.equals(codtem)) {
+				sw = 1;
+				while (sw != 0) {
+					try {
+						ps("::: El medico " + nomm + " atiende a los siguientes pacientes: " + "\n");
+						DataInputStream situpac = new DataInputStream(new FileInputStream("C:\\situpac.txt"));
 
-				// compara el codigo extraido de la tabla "datomed" con el codigo digitado
-				if (codm.equals(codtem)) {
-					ps("::: El medico " + nomm + " atiende a los siguientes pacientes: " + "\n");
-					DataInputStream situpac = null;
-					situpac = new DataInputStream(new FileInputStream("C:\\situpac.txt"));
+						codp = situpac.readUTF();
+						codme = situpac.readUTF();
+						enfp = situpac.readUTF();
 
-					sw = 1;
-					while (sw != 0) {
-						try {
-							codp = situpac.readUTF();
-							codme = situpac.readUTF();
-							enfp = situpac.readUTF();
+				// compara el codigo medico de la tabla "datomed" con el de la tabla "situpac"
+						if (codme.equals(codtem)) {
+							DataInputStream datopac = new DataInputStream(new FileInputStream("C:\\datopac.txt"));
 
-					// compara el codigo medico de la tabla "datomed" con el de la tabla "situpac"
-							if (codme.equals(codtem)) {
-								DataInputStream datopac = null;
-								datopac = new DataInputStream(new FileInputStream("C:\\datopac.txt"));
+							sw1 = 1;
+							while (sw1 != 0) {
+								try {
+									codpa = datopac.readUTF();
+									nompa = datopac.readUTF();
 
-								sw1 = 1;
-								while (sw1 != 0) {
-									try {
-										codpa = datopac.readUTF();
-										nompa = datopac.readUTF();
-
-					// compara el codigo del paciente de la tabla "situpac" con el codigo del paciente de la tabla "datopac"
-										if (codpa.equals(codp)){
-											ps("::: Paciente: " + nompa + "\n");
-										}
-									} catch (EOFException e) {
-										sw1 = 0;
+				// compara el codigo del paciente de la tabla "situpac" con el codigo del paciente de la tabla "datopac"
+									if (codpa.equals(codp)){
+										ps("::: Paciente: " + nompa + "\n");
 									}
+								} catch (EOFException e) {
+									sw1 = 0;
 								}
 							}
-						} catch (EOFException e) {
-							sw = 0;
+							
+							datopac.close();
 						}
+						situpac.close();
+					} catch (IOException e) {
+						sw = 0;
 					}
 				}
+				
 			}
-		} catch (IOException ioe) {
-			//mensaje de error
 		}
 	}
+	
 	
 	@SuppressWarnings("resource")
 	public static void listarEnfermedadesPorMedico() {
@@ -307,9 +310,14 @@ class CENTROMEDICO {
 			}
 		}
 	}
+	
+	
 
-	public static void main(String args[]) throws Exception {
-		// variables de seleccion usadas en los diferentes menus.
+	public static void main (String args[]) throws Exception {
+
+		VentanaConectar ventanaConectar = new VentanaConectar();
+		
+		/*
 		int opcion; 
 
 		do {
@@ -335,6 +343,6 @@ class CENTROMEDICO {
 				ps("Debe digitar una opcion del menu" + "\n");
 			
 		} while (opcion != 3);
-
+		 */
 	}
 }
