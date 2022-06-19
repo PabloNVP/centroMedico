@@ -3,6 +3,8 @@ package ventana.centroMedico;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,6 +19,17 @@ public class VentanaIngresoMedico extends JFrame{
 	private static final long serialVersionUID = 1L;
 	
 	private static VentanaIngresoMedico instancia;
+	
+	private static final int MIN_CODIGO = 0;
+	private static final int MIN_NOMBRE = 1;
+	private static final int MAX_CODIGO = 10000;
+	private static final int MAX_NOMBRE = 21;
+	private static final String REGEX_NOMBRE_PATTERN = "^ [A-Za-z] \\ w {5, 29} $";
+	private static final String[] ESPECIALIDADES = {"Pediatría", "Traumatología", "Cardiología"};
+	private final static String ERROR_CODIGO_RANGO = "El código debe ser un número entre 0 y 10000.";
+	private final static String ERROR_NOMBRE_RANGO = "El nombre debe contener un mínimo de 2 caracteres y un máximo de 20.";
+	private final static String ERROR_NOMBRE_FORMATO = "El nombre debe empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";
+	private final static String ERROR_ESPECIALIDAD_VALORES = "La especialidad solo puede ser Pediatría, Traumatología o Cardiología.";
 	
 	private final String titulo = "CENTRO MEDICO UNLAM";
 	private final String nombreVentana = "Ingresar datos del medico";
@@ -51,6 +64,55 @@ public class VentanaIngresoMedico extends JFrame{
 		return instancia;
 	}
 	
+	public static boolean verificarDatosMedico(int codigoMedico, String nombreMedico, String especialidadMedico, JLabel label) {
+		if (!verificarCodigo(codigoMedico)) {
+			mostrarMensaje(label, ERROR_CODIGO_RANGO);
+			return false;
+		}
+		
+		if (!verificarRangoNombre(nombreMedico)) {
+			mostrarMensaje(label, ERROR_NOMBRE_RANGO);
+			return false;
+		}
+		
+		if (!verificarFormatoNombre(nombreMedico)) {
+			mostrarMensaje(label, ERROR_NOMBRE_FORMATO);
+			return false;
+		}
+		
+		if (!verificarEspecialidad(especialidadMedico)) {
+			mostrarMensaje(label, ERROR_ESPECIALIDAD_VALORES);
+			return false;
+		}
+		
+		mostrarMensaje(label, "");
+		
+		return true;
+	}
+	
+	private static boolean verificarCodigo(int codigoMedico) {
+		return codigoMedico > MIN_CODIGO && codigoMedico < MAX_CODIGO;
+	}
+	
+	private static boolean verificarRangoNombre(String nombreMedico) {
+		int longitud = nombreMedico.length();
+		
+		return longitud > MIN_NOMBRE && longitud < MAX_NOMBRE;
+	}
+	
+	private static boolean verificarFormatoNombre(String nombreMedico) {
+		return Pattern.matches(REGEX_NOMBRE_PATTERN, nombreMedico);
+	}
+	
+	private static boolean verificarEspecialidad(String especialidadMedico) {
+		return Arrays.stream(ESPECIALIDADES).anyMatch(especialidad -> especialidad.equals(especialidadMedico));
+	}
+	
+	private static void mostrarMensaje(JLabel label, String mensaje) {
+		label.setText(mensaje);
+	}
+	
+	
 	private class Pantalla extends JPanel{
 		
 		private static final long serialVersionUID = 1L;
@@ -78,7 +140,13 @@ public class VentanaIngresoMedico extends JFrame{
 			ingresarJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// CENTROMEDICO.ingresarMedico();
+					int codigoMedico = Integer.valueOf(codMedicoJTF.getText());
+					String nombreMedico = nomMedicoJTF.getText();
+					String especialidadMedico = espMedicoJTF.getText();
+					
+					if (verificarDatosMedico(codigoMedico, nombreMedico, especialidadMedico, mensajeJL)) {
+						// CENTROMEDICO.ingresarMedico();
+					}
 				}
 			});
 			
