@@ -7,6 +7,8 @@ public class CENTROMEDICO {
 	public static int ALTO = 640;
 	public static int ANCHO = 480;
 	
+	public final static String TITULO = "CENTRO MEDICO UNLAM";
+	
 	public static void ps(String x) {
 		System.out.print(x);
 	}
@@ -200,8 +202,7 @@ public class CENTROMEDICO {
 		sw = 1;
 		while (sw != 0) {
 			try {
-				DataInputStream datomed = null;
-				datomed = new DataInputStream(new FileInputStream("C:\\datomed.txt"));
+				DataInputStream datomed = new DataInputStream(new FileInputStream("C:\\datomed.txt"));
 				
 				codm = datomed.readUTF();
 				nomm = datomed.readUTF();
@@ -316,6 +317,7 @@ public class CENTROMEDICO {
 	public static void main (String args[]) throws Exception {
 
 		VentanaConectar ventanaConectar = new VentanaConectar();
+		ventanaConectar.setVisible(true);
 		
 		/*
 		int opcion; 

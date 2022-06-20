@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import controlador.centroMedico.CENTROMEDICO;
+
 public class VentanaConectar extends JFrame{
 
 	private static final long serialVersionUID = 1L;
@@ -18,13 +20,9 @@ public class VentanaConectar extends JFrame{
 	private static final String USUARIO = "centroMedico";
 	private static final Integer PASSWORD = -643275276; //productoFinal2022
 	
-	private static int ALTO = 640;
-	private static int ANCHO = 480;
-	
-	private final String titulo = "CENTRO MEDICO UNLAM";
 	private final String nombreVentana = "Conectar";
 	
-	private JLabel tituloJL = new JLabel(titulo);
+	private JLabel tituloJL = new JLabel(CENTROMEDICO.TITULO);
 	private JLabel nombreVentanaJL = new JLabel(nombreVentana);
 	private JLabel usuarioJL = new JLabel("Usuario:");
 	private JLabel contrasenaJL = new JLabel("Contraseña:");
@@ -37,12 +35,12 @@ public class VentanaConectar extends JFrame{
 	public VentanaConectar(){
 		JPanel pantalla = new Pantalla();
 		
-		setSize(ALTO, ANCHO);
-		setTitle(titulo + " - " + nombreVentana);
+		setSize(CENTROMEDICO.ALTO, CENTROMEDICO.ANCHO);
+		setTitle(CENTROMEDICO.TITULO + " - " + nombreVentana);
 		add(pantalla);
 		setLocationRelativeTo(null);
+		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setVisible(true);
 	}
 	
 	public static boolean puedeIngresarUsuario(String usuario, String contrasena) {

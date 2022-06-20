@@ -15,11 +15,10 @@ public class VentanaIngreso extends JFrame{
 	private static final long serialVersionUID = 1L;
 	
 	private static VentanaIngreso instancia;
-	
-	private final String titulo = "CENTRO MEDICO UNLAM";
+
 	private final String nombreVentana = "Ingreso de Pacientes";
 	
-	private JLabel tituloJL = new JLabel(titulo);
+	private JLabel tituloJL = new JLabel(CENTROMEDICO.TITULO);
 	private JLabel nombreVentanaJL = new JLabel(nombreVentana);
 	private JButton datosJB = new JButton("Ingresar datos del Paciente");
 	private JButton situacionJB = new JButton("Ingresar situación del Paciente");
@@ -30,7 +29,7 @@ public class VentanaIngreso extends JFrame{
 		JPanel pantalla = new Pantalla();
 		
 		setSize(CENTROMEDICO.ALTO, CENTROMEDICO.ANCHO);
-		setTitle(titulo + " - " + nombreVentana);
+		setTitle(CENTROMEDICO.TITULO + " - " + nombreVentana);
 		add(pantalla);
 		setLocationRelativeTo(null);
 		setResizable(false);
