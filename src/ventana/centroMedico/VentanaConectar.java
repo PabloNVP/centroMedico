@@ -19,6 +19,7 @@ public class VentanaConectar extends JFrame{
 	
 	private static final String USUARIO = "centroMedico";
 	private static final Integer PASSWORD = -643275276; //productoFinal2022
+	private static final String ERROR_LOGIN = "Usuario y/o contraseña incorrecta.";
 	
 	private final String nombreVentana = "Conectar";
 	
@@ -44,7 +45,7 @@ public class VentanaConectar extends JFrame{
 	}
 	
 	public static boolean puedeIngresarUsuario(String usuario, String contrasena) {
-		// Compara el usuario y contraseña ingresados en la interfaz con las ya harcodeadas.
+		// Verificación de usuario y contraseña correctos.
 		return (USUARIO.equals(usuario) && PASSWORD.equals(contrasena.hashCode()));
 	}
 	
@@ -75,7 +76,7 @@ public class VentanaConectar extends JFrame{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if(!puedeIngresarUsuario(usuarioJTF.getText(), String.valueOf(contrasenaJPF.getPassword()))) {
-						mensajeJL.setText("Usuario y/o contraseña incorrecta.");	
+						mensajeJL.setText(ERROR_LOGIN);	
 					}else {
 						VentanaInicio.getInstancia().setVisible(true);
 						dispose();
