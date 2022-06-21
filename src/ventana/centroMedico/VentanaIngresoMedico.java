@@ -12,7 +12,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -45,7 +44,7 @@ public class VentanaIngresoMedico extends JFrame{
 	private JLabel mensajeJL = new JLabel("");
 	private JTextField codMedicoJTF = new JTextField();
 	private JTextField nomMedicoJTF = new JTextField();
-	private JList<String> espMedicoJTF = new JList<String>(ESPECIALIDADES);
+	private JComboBox<String> espMedicoJTF = new JComboBox<String>(ESPECIALIDADES);
 	private JButton ingresarJB = new JButton("Ingresar");
 	private JButton volverJB = new JButton("Volver");
 	
@@ -133,7 +132,7 @@ public class VentanaIngresoMedico extends JFrame{
 			codMedicoJTF.setBounds(288, 165, 192, 24);
 			nomMedicoJTF.setBounds(288, 197, 192, 24);
 
-			espMedicoJTF.setBounds(288, 229, 192, 55);
+			espMedicoJTF.setBounds(288, 229, 192, 24);
 			
 			mensajeJL.setBounds(160, 255, 320, 24);
 			mensajeJL.setForeground(Color.RED);
@@ -147,7 +146,7 @@ public class VentanaIngresoMedico extends JFrame{
 					try {
 						int codigoMedico = Integer.valueOf(codMedicoJTF.getText());
 						String nombreMedico = nomMedicoJTF.getText();
-						String especialidadMedico = espMedicoJTF.getSelectedValue();
+						String especialidadMedico = ESPECIALIDADES[espMedicoJTF.getSelectedIndex()];
 						
 						if (verificarDatosMedico(codigoMedico, nombreMedico, especialidadMedico, mensajeJL)) {
 							CENTROMEDICO.ingresarMedico(String.valueOf(codigoMedico), nombreMedico, especialidadMedico);
