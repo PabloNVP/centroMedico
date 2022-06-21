@@ -1,14 +1,17 @@
 package ventana.centroMedico;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -24,7 +27,7 @@ public class VentanaIngresoMedico extends JFrame{
 	private static final int MIN_NOMBRE = 1;
 	private static final int MAX_CODIGO = 10000;
 	private static final int MAX_NOMBRE = 21;
-	private static final String REGEX_NOMBRE_PATTERN = "^ [A-Za-z] \\ w {5, 29} $";
+	private static final String REGEX_NOMBRE_PATTERN = "^[A-Za-z0-]+[A-Za-z0-9? ´]*$";
 	private static final String[] ESPECIALIDADES = {"Pediatría", "Traumatología", "Cardiología"};
 	private final static String ERROR_CODIGO_RANGO = "El código debe ser un número entre 0 y 10000.";
 	private final static String ERROR_NOMBRE_RANGO = "El nombre debe contener un mínimo de 2 caracteres y un máximo de 20.";
@@ -42,7 +45,7 @@ public class VentanaIngresoMedico extends JFrame{
 	private JLabel mensajeJL = new JLabel("");
 	private JTextField codMedicoJTF = new JTextField();
 	private JTextField nomMedicoJTF = new JTextField();
-	private JTextField espMedicoJTF = new JTextField();
+	private JList<String> espMedicoJTF = new JList<String>(ESPECIALIDADES);
 	private JButton ingresarJB = new JButton("Ingresar");
 	private JButton volverJB = new JButton("Volver");
 	
@@ -129,7 +132,7 @@ public class VentanaIngresoMedico extends JFrame{
 			
 			codMedicoJTF.setBounds(288, 165, 192, 24);
 			nomMedicoJTF.setBounds(288, 197, 192, 24);
-			espMedicoJTF.setBounds(288, 229, 192, 24);
+			espMedicoJTF.setBounds(288, 229, 192, 55);
 			
 			mensajeJL.setBounds(200, 245, 256, 24);
 			mensajeJL.setForeground(Color.RED);
@@ -140,12 +143,16 @@ public class VentanaIngresoMedico extends JFrame{
 			ingresarJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					int codigoMedico = Integer.valueOf(codMedicoJTF.getText());
-					String nombreMedico = nomMedicoJTF.getText();
-					String especialidadMedico = espMedicoJTF.getText();
-					
-					if (verificarDatosMedico(codigoMedico, nombreMedico, especialidadMedico, mensajeJL)) {
-						// CENTROMEDICO.ingresarMedico();
+					try {
+						int codigoMedico = Integer.valueOf(codMedicoJTF.getText());
+						String nombreMedico = nomMedicoJTF.getText();
+						String especialidadMedico = espMedicoJTF.getSelectedValue();
+						
+						if (verificarDatosMedico(codigoMedico, nombreMedico, especialidadMedico, mensajeJL)) {
+							CENTROMEDICO.ingresarMedico(String.valueOf(codigoMedico), nombreMedico, especialidadMedico);
+						}
+					} catch(IOException ioe) {
+						mostrarMensaje(mensajeJL, ioe.getMessage());
 					}
 				}
 			});

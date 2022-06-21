@@ -57,7 +57,8 @@ public class CENTROMEDICO {
 			else if(opcion == 2)
 				ingresarSituacionPaciente();
 			else if(opcion == 3)
-				ingresarMedico();
+				ps("HOLA");
+				// ingresarMedico();
 			else if(opcion != 4)
 				ps("Debe digitar una opcion del menu" + "\n");
 
@@ -154,10 +155,24 @@ public class CENTROMEDICO {
 		}
 	}
 	
-	public static void ingresarMedico() {
-		try {
-			String codmed, nommed, espmed, op;
+	public static void ingresarMedico(String codmed, String nommed, String espmed) throws IOException {
+		DataOutputStream datomed = new DataOutputStream(new FileOutputStream("C:\\datomed.txt"));
+		
+		datomed.writeUTF(codmed);
+		datomed.writeUTF(nommed);
+		datomed.writeUTF(espmed);
+		
+		datomed.close();
+		
+		/*try {
+			String op;
 			DataOutputStream datomed = new DataOutputStream(new FileOutputStream("C:\\datomed.txt"));
+			
+			datomed.writeUTF(codmed);
+			datomed.writeUTF(nommed);
+			datomed.writeUTF(espmed);
+			
+			datomed.close();
 			
 			do {
 				ps("   ....................................................." + "\n");
@@ -186,7 +201,7 @@ public class CENTROMEDICO {
 			datomed.close();
 		} catch (IOException ioe) {
 			//Mensaje de Error
-		}
+		}*/
 	}
 	
 	@SuppressWarnings("resource")
