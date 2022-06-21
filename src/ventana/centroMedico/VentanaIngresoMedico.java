@@ -29,10 +29,6 @@ public class VentanaIngresoMedico extends JFrame{
 	private static final int MAX_NOMBRE = 21;
 	private static final String REGEX_NOMBRE_PATTERN = "^[A-Za-z0-]+[A-Za-z0-9? ´]*$";
 	private static final String[] ESPECIALIDADES = {"Pediatría", "Traumatología", "Cardiología"};
-	private final static String ERROR_CODIGO_RANGO = "El código debe ser un número entre 0 y 10000.";
-	private final static String ERROR_NOMBRE_RANGO = "El nombre debe contener un mínimo de 2 caracteres y un máximo de 20.";
-	private final static String ERROR_NOMBRE_FORMATO = "El nombre debe empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";
-	private final static String ERROR_ESPECIALIDAD_VALORES = "La especialidad solo puede ser Pediatría, Traumatología o Cardiología.";
 	
 	private final String nombreVentana = "Ingresar datos del medico";
 	
@@ -68,22 +64,22 @@ public class VentanaIngresoMedico extends JFrame{
 	
 	public static boolean verificarDatosMedico(int codigoMedico, String nombreMedico, String especialidadMedico, JLabel label) {
 		if (!verificarCodigo(codigoMedico)) {
-			mostrarMensaje(label, ERROR_CODIGO_RANGO);
+			mostrarMensaje(label, CENTROMEDICO.ERROR_CODIGO_RANGO_MEDICO);
 			return false;
 		}
 		
 		if (!verificarRangoNombre(nombreMedico)) {
-			mostrarMensaje(label, ERROR_NOMBRE_RANGO);
+			mostrarMensaje(label, CENTROMEDICO.ERROR_NOMBRE_RANGO_MEDICO);
 			return false;
 		}
 		
 		if (!verificarFormatoNombre(nombreMedico)) {
-			mostrarMensaje(label, ERROR_NOMBRE_FORMATO);
+			mostrarMensaje(label, CENTROMEDICO.ERROR_NOMBRE_FORMATO_MEDICO);
 			return false;
 		}
 		
 		if (!verificarEspecialidad(especialidadMedico)) {
-			mostrarMensaje(label, ERROR_ESPECIALIDAD_VALORES);
+			mostrarMensaje(label, CENTROMEDICO.ERROR_ESPECIALIDAD_VALORES_MEDICO);
 			return false;
 		}
 		
