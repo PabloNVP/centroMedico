@@ -1,12 +1,25 @@
 package controlador.centroMedico;
 import java.io.*;
+import java.util.ArrayList;
 
 import ventana.centroMedico.VentanaConectar;
 
 public class CENTROMEDICO {
-	public static int ALTO = 640;
-	public static int ANCHO = 480;
+	//Dimensiones de la interfaz
+	public final static int ALTO = 640;
+	public final static int ANCHO = 480;
 	
+	//Titulo de la interfaz
+	public final static String TITULO = "CENTRO MEDICO UNLAM";
+	
+	//Mensajes de Errores
+	public final static String ERROR_CODIGO_RANGO_MEDICO = "El código debe ser un número entre 0 y 10000.";
+	public final static String ERROR_NOMBRE_RANGO_MEDICO = "El nombre debe contener un mínimo de 2 caracteres y un máximo de 20.";
+	public final static String ERROR_NOMBRE_FORMATO_MEDICO = "El nombre debe empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";
+	public final static String ERROR_ESPECIALIDAD_VALORES_MEDICO = "La especialidad solo puede ser Pediatría, Traumatología o Cardiología.";
+	public final static String ERROR_ARCHIVO_MEDICO = "";
+			
+	//Obsoleto
 	public static void ps(String x) {
 		System.out.print(x);
 	}
@@ -84,8 +97,8 @@ public class CENTROMEDICO {
 			
 			if(opcion == 1)
 				listarPacientesPorMedico();
-			else if(opcion == 2)
-				listarEnfermedadesPorMedico();
+			/*else if(opcion == 2)
+				listarEnfermedadesPorMedico();*/
 			else if(opcion != 3)
 				ps("Seleccione una de las opciones del menu" + "\n");
 			
@@ -156,7 +169,8 @@ public class CENTROMEDICO {
 	}
 	
 	public static void ingresarMedico(String codmed, String nommed, String espmed) throws IOException {
-		DataOutputStream datomed = new DataOutputStream(new FileOutputStream("C:\\datomed.txt"));
+		// Abre el archivo haciendo referencia al final del mismo.
+		DataOutputStream datomed = new DataOutputStream(new FileOutputStream("C:\\datomed.txt", true));
 		
 		datomed.writeUTF(codmed);
 		datomed.writeUTF(nommed);
@@ -215,8 +229,7 @@ public class CENTROMEDICO {
 		sw = 1;
 		while (sw != 0) {
 			try {
-				DataInputStream datomed = null;
-				datomed = new DataInputStream(new FileInputStream("C:\\datomed.txt"));
+				DataInputStream datomed = new DataInputStream(new FileInputStream("C:\\datomed.txt"));
 				
 				codm = datomed.readUTF();
 				nomm = datomed.readUTF();
@@ -269,61 +282,75 @@ public class CENTROMEDICO {
 	}
 	
 	
-	@SuppressWarnings("resource")
-	public static void listarEnfermedadesPorMedico() {
-		String codtem;
+	public static ArrayList<String> listarEnfermedadesPorMedico(String codigo) throws Exception{
+		//String codtem;
+		// Variables de corte de control
 		int sw = 0, sw1 = 0;
-		String codm = "", codme = "", enfp = "", nomm = "", espm = "", codp; // variables usadas en la lectura de datos
 		
-		ps("Digite el codigo del medico que desea consultar: ");
-		codtem = LeerCadena();
-
-		DataInputStream datomed = null;
+		// Variables usadas en la lectura de datos.
+		String codm = "", codme = "", enfp = "", nomm = "", espm = "", codp;
+		
+		//ps("Digite el codigo del medico que desea consultar: ");
+		//codtem = LeerCadena();
+		
+		// Arreglo de información
+		ArrayList<String> pacientes = new ArrayList<String>();
+		
 		try {
-			datomed = new DataInputStream(new FileInputStream("C:\\datomed.txt"));
+			DataInputStream datomed = new DataInputStream(new FileInputStream("C:\\datomed.txt")); 
 			sw1 = 1;
-		} catch (FileNotFoundException e1) {
-			sw=0;
-		}
+			
+			while (sw1 != 0) {
+				try {
+					codm = datomed.readUTF();
+					nomm = datomed.readUTF();
+					espm = datomed.readUTF();
+					
+					// compara el codigo digitado
+					// con el codigo del medico de la
+					// tabla "datomed"
+					if (codm.equals(codigo)){
+						//ps("El medico " + nomm + " trata las siguientes enfermedades:" + "\n");
+						pacientes.add("Nombre del Medico: " + nomm); 
+						
+						DataInputStream situpac = new DataInputStream(
+								new FileInputStream("C:\\situpac.txt"));
 		
-		while (sw1 != 0) {
-			try {
-				codm = datomed.readUTF();
-				nomm = datomed.readUTF();
-				espm = datomed.readUTF();
-	
-				 // compara el codigo digitado
-				// con el codigo del medico de la
-				// tabla "datomed"
-				if (codm.equals(codtem)){
-					ps("El medico " + nomm + " trata las siguientes enfermedades:" + "\n");
-	
-					DataInputStream situpac = new DataInputStream(
-							new FileInputStream("C:\\situpac.txt"));
-	
-					sw = 1;
-					while (sw != 0) {
-						try {
-							codp = situpac.readUTF();
-							codme = situpac.readUTF();
-							enfp = situpac.readUTF();
-	
-							// compara el codigo del medico
-							// de la tabla "datomed"
-							// con el codigo del medico en la
-							// tabla "situpac"
-							if (codtem.equals(codme)){
-								ps(">>>> " + enfp + "\n");
+						pacientes.add("Nombre de las enfermedades: ");
+						
+						sw = 1;
+						
+						while (sw != 0) {
+							try {
+								codp = situpac.readUTF();
+								codme = situpac.readUTF();
+								enfp = situpac.readUTF();
+		
+								// compara el codigo del medico
+								// de la tabla "datomed"
+								// con el codigo del medico en la
+								// tabla "situpac"
+								if (codme.equals(codigo)){
+									//ps(">>>> " + enfp + "\n");
+									pacientes.add("   " + enfp);
+								}
+							} catch (EOFException e) {
+								sw = 0;
 							}
-						} catch (EOFException e) {
-							sw = 0;
+							
+						situpac.close();
 						}
 					}
+				} catch (EOFException e) {
+					sw1 = 0;
 				}
-			} catch (IOException e) {
-				sw1 = 0;
 			}
+			datomed.close();
+		} catch (FileNotFoundException e) {
+			throw new Exception("louc");
 		}
+		
+		return pacientes;
 	}
 	
 	
@@ -331,6 +358,7 @@ public class CENTROMEDICO {
 	public static void main (String args[]) throws Exception {
 
 		VentanaConectar ventanaConectar = new VentanaConectar();
+		ventanaConectar.setVisible(true);
 		
 		/*
 		int opcion; 

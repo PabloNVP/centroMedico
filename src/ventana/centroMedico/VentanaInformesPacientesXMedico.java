@@ -19,10 +19,9 @@ public class VentanaInformesPacientesXMedico extends JFrame{
 	
 	private static VentanaInformesPacientesXMedico instancia;
 	
-	private final String titulo = "CENTRO MEDICO UNLAM";
 	private final String nombreVentana = "Informes de pacientes por medico";
 	
-	private JLabel tituloJL = new JLabel(titulo);
+	private JLabel tituloJL = new JLabel(CENTROMEDICO.TITULO);
 	private JLabel nombreVentanaJL = new JLabel(nombreVentana);
 	private JLabel codMedicoJL = new JLabel("Codigo del medico:");
 	private JLabel mensajeJL = new JLabel("");
@@ -35,7 +34,7 @@ public class VentanaInformesPacientesXMedico extends JFrame{
 		JPanel pantalla = new Pantalla();
 		
 		setSize(CENTROMEDICO.ALTO, CENTROMEDICO.ANCHO);
-		setTitle(titulo + " - " + nombreVentana);
+		setTitle(CENTROMEDICO.TITULO + " - " + nombreVentana);
 		add(pantalla);
 		setLocationRelativeTo(null);
 		setResizable(false);
