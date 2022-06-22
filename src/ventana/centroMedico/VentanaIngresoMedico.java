@@ -23,10 +23,9 @@ public class VentanaIngresoMedico extends JFrame{
 	
 	private static VentanaIngresoMedico instancia;
 	
-	private static final int MIN_CODIGO = 0;
 	private static final int MIN_NOMBRE = 1;
-	private static final int MAX_CODIGO = 10000;
 	private static final int MAX_NOMBRE = 21;
+	private static final String REGEX_CODIGO_PATTERN = "^[1-9][0-9]{0,3}$";
 	private static final String REGEX_NOMBRE_PATTERN = "^[A-Za-z0-]+[A-Za-z0-9? ´]*$";
 	private static final String[] ESPECIALIDADES = {"Pediatría", "Traumatología", "Cardiología"};
 	private final static String ERROR_CODIGO_RANGO = "El código debe ser un número entre 0 y 10000.";
@@ -67,7 +66,7 @@ public class VentanaIngresoMedico extends JFrame{
 		return instancia;
 	}
 	
-	public static boolean verificarDatosMedico(int codigoMedico, String nombreMedico, String especialidadMedico, JLabel label) {
+	public static boolean verificarDatosMedico(String codigoMedico, String nombreMedico, String especialidadMedico, JLabel label) {
 		if (!verificarCodigo(codigoMedico)) {
 			mostrarMensaje(label, ERROR_CODIGO_RANGO);
 			return false;
@@ -93,8 +92,8 @@ public class VentanaIngresoMedico extends JFrame{
 		return true;
 	}
 	
-	private static boolean verificarCodigo(int codigoMedico) {
-		return codigoMedico > MIN_CODIGO && codigoMedico < MAX_CODIGO;
+	private static boolean verificarCodigo(String codigoMedico) {
+		return Pattern.matches(REGEX_CODIGO_PATTERN, codigoMedico);
 	}
 	
 	private static boolean verificarRangoNombre(String nombreMedico) {
@@ -144,12 +143,12 @@ public class VentanaIngresoMedico extends JFrame{
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						int codigoMedico = Integer.valueOf(codMedicoJTF.getText());
+						String codigoMedico = codMedicoJTF.getText();
 						String nombreMedico = nomMedicoJTF.getText();
 						String especialidadMedico = espMedicoJTF.getSelectedValue();
 						
 						if (verificarDatosMedico(codigoMedico, nombreMedico, especialidadMedico, mensajeJL)) {
-							CENTROMEDICO.ingresarMedico(String.valueOf(codigoMedico), nombreMedico, especialidadMedico);
+							CENTROMEDICO.ingresarMedico(codigoMedico, nombreMedico, especialidadMedico);
 						}
 					} catch(IOException ioe) {
 						mostrarMensaje(mensajeJL, ioe.getMessage());
