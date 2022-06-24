@@ -73,7 +73,10 @@ public class VentanaIngresoPaciente extends JFrame{
 			ingresarJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// CENTROMEDICO.ingresarPaciente();
+					String codPac = codPacienteJTF.getText();
+					String nomPac = nomPacienteJPF.getText();
+					
+					CENTROMEDICO.ingresarPaciente(codPac,nomPac);
 				}
 			});
 			

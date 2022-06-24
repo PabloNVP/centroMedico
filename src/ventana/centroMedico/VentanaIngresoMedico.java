@@ -1,7 +1,6 @@
 package ventana.centroMedico;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -27,7 +26,7 @@ public class VentanaIngresoMedico extends JFrame{
 	private static final int MAX_NOMBRE = 21;
 	private static final String REGEX_CODIGO_PATTERN = "^[1-9][0-9]{0,3}$";
 	private static final String REGEX_NOMBRE_PATTERN = "^[A-Za-z0-]+[A-Za-z0-9? Â´]*$";
-	private static final String[] ESPECIALIDADES = {"PediatrÃ­a", "TraumatologÃ­a", "CardiologÃ­a"};
+	private static final String[] ESPECIALIDADES = {"Pediatría", "Traumatología", "Cardiología"};
 	
 	private final String nombreVentana = "Ingresar datos del medico";
 	

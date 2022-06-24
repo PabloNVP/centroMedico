@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -93,7 +94,7 @@ public class VentanaInformesEnfermedadesXMedico extends JFrame{
 						if( enfermedades.size() == 0)
 							contenidoDLM.add(0,"No existe ningun medico con ese codigo.");
 						else 
-							contenidoDLM.addAll(enfermedades);
+							((List<String>) contenidoDLM).addAll(enfermedades);
 							
 						mensajeJL.setText("");
 						

@@ -75,7 +75,8 @@ public class VentanaConectar extends JFrame{
 			ingresarJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if(!puedeIngresarUsuario(usuarioJTF.getText(), String.valueOf(contrasenaJPF.getPassword()))) {
+//					!puedeIngresarUsuario(usuarioJTF.getText(), String.valueOf(contrasenaJPF.getPassword()))
+					if(!puedeIngresarUsuario("centroMedico", "productoFinal2022")) {
 						mensajeJL.setText(ERROR_LOGIN);	
 					}else {
 						VentanaInicio.getInstancia().setVisible(true);
