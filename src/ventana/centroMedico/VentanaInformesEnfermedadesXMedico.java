@@ -97,6 +97,7 @@ public class VentanaInformesEnfermedadesXMedico extends JFrame{
 			volverJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent event) {
+					resetearVentana();
 					VentanaInformesEnfermedadesXMedico.getInstancia().setVisible(false);
 					VentanaInformes.getInstancia().setVisible(true);
 				}
@@ -111,5 +112,11 @@ public class VentanaInformesEnfermedadesXMedico extends JFrame{
 			add(buscarJB);
 			add(volverJB);
 		}
+	}
+	
+	private void resetearVentana() {
+		contenidoDLM.clear();
+		codMedicoJTF.setText("");
+		mensajeJL.setText("");
 	}
 }

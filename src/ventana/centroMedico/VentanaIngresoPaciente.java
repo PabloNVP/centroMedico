@@ -66,7 +66,7 @@ public class VentanaIngresoPaciente extends JFrame{
 			codPacienteJTF.setBounds(288, 165, 192, 24);
 			nomPacienteJPF.setBounds(288, 197, 192, 24);
 			
-			mensajeJL.setBounds(200, 245, 256, 24);
+			mensajeJL.setBounds(140, 245, 360, 24);
 			mensajeJL.setForeground(Color.RED);
 			
 			ingresarJB.setBounds(192, 304, 256, 32);

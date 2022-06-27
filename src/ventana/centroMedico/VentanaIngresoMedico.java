@@ -3,8 +3,6 @@ package ventana.centroMedico;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -125,6 +123,7 @@ public class VentanaIngresoMedico extends JFrame{
 			volverJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					resetearVentana();
 					cerrarVentana();
 				}
 			});

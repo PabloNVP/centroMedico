@@ -157,74 +157,102 @@ public class CENTROMEDICO {
 		} 
 	}
 
-	@SuppressWarnings("resource")
-	public static void listarPacientesPorMedico(String codMed) {
+	public static ArrayList<String> buscarPacientesPorMedico(String codigo, ArrayList<String> pacientes) throws Exception{
 		int sw = 0, sw1 = 0;
-		String codm = "", nomm = "", espm, codp, codme, enfp, codpa, nompa;
-/*
-		ps("Digite el codigo del medico que desea consultar: ");
-		codtem = LeerCadena();*/
-
-		sw = 1;
-		while (sw != 0) {
-			try {
-				DataInputStream datomed = new DataInputStream(new FileInputStream(DATO_MED_PATH));
-
-				codm = datomed.readUTF();
-				nomm = datomed.readUTF();
-				espm = datomed.readUTF();
-			} catch (IOException e) {
-				sw = 0;
-			}
-
-			// compara el codigo extraido de la tabla "datomed" con el codigo digitado
-			if (codm.equals(codMed)) {
-				sw = 1;
-				while (sw != 0) {
-					try {
-						//ps("::: El medico " + nomm + " atiende a los siguientes pacientes: " + "\n");
-						DataInputStream situpac = new DataInputStream(new FileInputStream(SITU_PAC_PATH));
-
-						codp = situpac.readUTF();
-						codme = situpac.readUTF();
-						enfp = situpac.readUTF();
-
-						// compara el codigo medico de la tabla "datomed" con el de la tabla "situpac"
-						if (codme.equals(codMed)) {
-							DataInputStream datopac = new DataInputStream(new FileInputStream(DATO_PAC_PATH));
-
-							sw1 = 1;
-							while (sw1 != 0) {
-								try {
-									codpa = datopac.readUTF();
-									nompa = datopac.readUTF();
-
-									// compara el codigo del paciente de la tabla "situpac" con el codigo del
-									// paciente de la tabla "datopac"
-									if (codpa.equals(codp)) {
-										//ps("::: Paciente: " + nompa + "\n");
-									}
-								} catch (EOFException e) {
-									sw1 = 0;
+		String codp, codme, enfp, codpa, nompa;
+		
+		try {
+			DataInputStream situpac = new DataInputStream(new FileInputStream(SITU_PAC_PATH));
+			
+			sw = 1;
+			while (sw != 0) {
+				try {
+					codp = desencriptar(situpac.readUTF());
+					codme = desencriptar(situpac.readUTF());
+					enfp = desencriptar(situpac.readUTF());
+	
+					// compara el codigo medico de la tabla "datomed" 
+					// con el de la tabla "situpac"
+					if (codme.equals(codigo)) {
+						DataInputStream datopac = new DataInputStream(new FileInputStream(DATO_PAC_PATH));
+	
+						sw1 = 1;
+						while (sw1 != 0) {
+							try {
+								codpa = desencriptar(datopac.readUTF());
+								nompa = desencriptar(datopac.readUTF());
+	
+								// compara el codigo del paciente de la tabla 
+								// "situpac" con el codigo del
+								// paciente de la tabla "datopac"
+								if (codpa.equals(codp)) {
+									pacientes.add("   " + nompa);
 								}
+							} catch (EOFException e) {
+								sw1 = 0;
 							}
-
-							datopac.close();
 						}
-						situpac.close();
-					} catch (IOException e) {
-						sw = 0;
+						datopac.close();
 					}
+				} catch (EOFException e) {
+					sw = 0;
 				}
-
 			}
+			situpac.close();
+		} catch(FileNotFoundException e) {
+			sw = 0;
 		}
+		
+		return pacientes;
+	}
+	
+	public static ArrayList<String> listarPacientesPorMedico(String codigo) throws Exception{
+		
+		// Valida el codigo del medico.
+		if(!esCodigoValido(codigo)){
+			throw new Exception(ERROR_CODIGO_RANGO_MEDICO);
+		}
+	
+		int sw = 0;
+		String codm = "", nomm = "", espm;
+
+		// Arreglo de información
+		ArrayList<String> pacientes = new ArrayList<String>();
+		
+		try {
+			DataInputStream datomed = new DataInputStream(new FileInputStream(DATO_MED_PATH));
+
+			sw = 1;
+			while (sw != 0) {
+				try {
+					codm = desencriptar(datomed.readUTF());
+					nomm = desencriptar(datomed.readUTF());
+					espm = desencriptar(datomed.readUTF());
+					
+					// compara el codigo extraido de la tabla "datomed" con el codigo digitado
+					if (codm.equals(codigo)) {
+						pacientes.add("Nombre del Medico: " + nomm);
+						pacientes.add("Nombre de los pacientes que atiende: ");
+						
+						pacientes = buscarPacientesPorMedico(codigo, pacientes);
+					}
+				}catch(EOFException e) {
+					sw = 0;
+				}
+			}
+			
+			datomed.close();
+		} catch (FileNotFoundException e) {
+			sw = 0;
+		}
+		
+		return pacientes;
 	}
 
 	public static ArrayList<String> listarEnfermedadesPorMedico(String codigo) throws Exception {
 		
 		// Valida el codigo del medico.
-		if(!codigo.matches("^[1-9][0-9]{0,3}$")){
+		if(!esCodigoValido(codigo)){
 			throw new Exception(ERROR_CODIGO_RANGO_MEDICO);
 		}
 		
@@ -252,7 +280,7 @@ public class CENTROMEDICO {
 					// tabla "datomed"
 					if (codm.equals(codigo)) {
 						enfermedades.add("Nombre del Medico: " + nomm);
-						enfermedades.add("Nombre de las enfermedades: ");
+						enfermedades.add("Nombre de las enfermedades que atiende: ");
 						
 						DataInputStream situpac = new DataInputStream(new FileInputStream(SITU_PAC_PATH));
 
