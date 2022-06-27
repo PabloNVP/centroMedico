@@ -1,6 +1,5 @@
 package controlador.centroMedico;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -8,24 +7,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
+
 import java.util.ArrayList;
 import java.util.Base64;
-
-import javax.crypto.BadPaddingException;
+import java.security.Key;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import ventana.centroMedico.VentanaConectar;
@@ -39,282 +25,95 @@ public class CENTROMEDICO {
 	public final static String TITULO = "CENTRO MEDICO UNLAM";
 
 	// Mensajes de Errores
-	public final static String ERROR_CODIGO_RANGO_MEDICO = "El código debe ser un número entre 0 y 10000.";
-	public final static String ERROR_NOMBRE_RANGO_MEDICO = "El nombre debe contener un mínimo de 2 caracteres y un máximo de 20.";
-	public final static String ERROR_NOMBRE_FORMATO_MEDICO = "El nombre debe empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";
+	public final static String ERROR_CODIGO_RANGO_MEDICO = "El código del medico debe ser un número entre 1 y 9999.";
+	public final static String ERROR_NOMBRE_RANGO_MEDICO = "El nombre del medico debe contener un mínimo de 2 caracteres y un máximo de 20.";
+	public final static String ERROR_NOMBRE_FORMATO_MEDICO = "El nombre del medico debe empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";
 	public final static String ERROR_ESPECIALIDAD_VALORES_MEDICO = "La especialidad solo puede ser Pediatría, Traumatología o Cardiología.";
-	public final static String ERROR_ARCHIVO_MEDICO = "";
-
+	
+	public final static String ERROR_CODIGO_RANGO_PACIENTE = "El código del paciente debe ser un número entre 1 y 9999.";
+	public final static String ERROR_FORMATO_SITUACION = "El diagnostico del paciente debe contener un minimo de 10 y un maximo de 200 caracteres.";
+	
+	public final static String ERROR_ARCHIVO_PACIENTE = "No se pudo guardar los datos del paciente en el archivo.";
+	public final static String ERROR_ARCHIVO_MEDICO = "No se pudo guardar los datos del medico en el archivo.";
+	public final static String ERROR_ARCHIVO_SITUACION = "No se pudo guardar el historial en el archivo.";
+	
+	// Path de archivos
 	private static final String DATO_MED_PATH = "./datomed.txt";
 	private static final String DATO_PAC_PATH = "./datopac.txt";
 	private static final String SITU_PAC_PATH = "./situpac.txt";
 
-	// Obsoleto
-	public static void ps(String x) {
-		System.out.print(x);
-	}
+	// Clave de Encriptado
+	private static final String CLAVE="AnalisiSdeSoftwarE2022";
 
-	public static int LeerEntero() {
-		int entero = 0;
-
+	public static void ingresarPaciente(String codPac, String nomPac) throws Exception{
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			entero = Integer.parseInt(br.readLine());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			// Abre el archivo haciendo referencia al final del mismo.
+			DataOutputStream archivo = new DataOutputStream(new FileOutputStream(DATO_PAC_PATH, true));
 
-		return (entero);
-	}
+			// Escribe en el archivo los datos del paciente encriptados.
+			archivo.writeUTF(encriptar(codPac));
+			archivo.writeUTF(encriptar(nomPac));
 
-	public static String LeerCadena() {
-		String linea = new String("");
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			linea = br.readLine();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return (linea);
-	}
-
-	public static void menuIngresoDeDatos() {
-//		int opcion = 0;
-//
-//		do {
-//			ps("   ..............................................." + "\n");
-//			ps("   :-: -I N G R E S O  D E  P A C I E N T E S- :-:" + "\n");
-//			ps("   :-:.........................................:-:" + "\n");
-//			ps("   :-: 1.  Datos del paciente                  :-:" + "\n");
-//			ps("   :-: 2.  Situacion del paciente              :-:" + "\n");
-//			ps("   :-: 3.  Datos del medico                    :-:" + "\n");
-//			ps("   :-: 4.  VOLVER                              :-:" + "\n");
-//			ps("   ..............................................." + "\n");
-//			ps("   ....Elija la opcion deseada: ");
-//
-//			opcion = LeerEntero();
-//
-//			if (opcion == 1)
-////				ingresarPaciente();
-//			else if (opcion == 2)
-//				ingresarSituacionPaciente();
-//			else if (opcion == 3)
-//				ps("HOLA");
-//			// ingresarMedico();
-//			else if (opcion != 4)
-//				ps("Debe digitar una opcion del menu" + "\n");
-//
-//		} while (opcion != 4);
-	}
-
-	public static void menuInformes() {
-		int opcion;
-
-		do {
-			ps("   ..............................................." + "\n");
-			ps("   :-:  C O N T R O L  D E  P A C I E N T E S  :-:" + "\n");
-			ps("   ..............................................." + "\n");
-			ps("   :-:           - I N F O R M E S -           :-:" + "\n");
-			ps("   :-:.........................................:-:" + "\n");
-			ps("   :-: 1. Listado de pacientes por medico      :-:" + "\n");
-			ps("   :-: 2. Enfermedades que atiende cada medico :-:" + "\n");
-			ps("   :-: 3. Anterior                             :-:" + "\n");
-			ps("   ..............................................." + "\n");
-			ps("   ....Elija la opcion deseada: ");
-
-			opcion = LeerEntero();
-
-			if (opcion == 1)
-				listarPacientesPorMedico();
-			/*
-			 * else if(opcion == 2) listarEnfermedadesPorMedico();
-			 */
-			else if (opcion != 3)
-				ps("Seleccione una de las opciones del menu" + "\n");
-
-		} while (opcion != 3);
-	}
-
-	public static void ingresarPaciente(String codPac, String nomPac) {
-
-		try {
-			DataOutputStream datomed = new DataOutputStream(new FileOutputStream(DATO_MED_PATH, true));
-
-			datomed.writeUTF(codPac);
-			datomed.writeUTF(nomPac);
-
-			datomed.close();
+			archivo.close();
 		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-//		try {
-//			String codpac, nompac, op;
-//			DataOutputStream datopac = new DataOutputStream(new FileOutputStream(DATO_PAC_PATH));
-//
-//			do {
-//				ps("   ..............................................." + "\n");
-//				ps("   :-:  - D A T O S  D E L  P A C I E N T E -  :-:" + "\n");
-//				ps("   :-:.........................................:-:" + "\n");
-//
-//				ps("Digite el codigo del paciente: ");
-//				codpac = LeerCadena();
-//				datopac.writeUTF(codpac);
-//
-//				ps("Digite el nombre del paciente: ");
-//				nompac = LeerCadena();
-//				datopac.writeUTF(nompac);
-//
-//				ps("Desea ingresar otro paciente? S/N" + "\n");
-//				op = LeerCadena();
-//
-//			} while (op.equals("S") || op.equals("s"));
-//			datopac.close();
-//
-//		} catch (IOException ioe) {
-//			// mensaje de error
-//		}
-	}
-
-	public static void ingresarSituacionPaciente() {
-		try {
-			String codp, codm, enfpac, op;
-			DataOutputStream situpac = new DataOutputStream(new FileOutputStream(SITU_PAC_PATH));
-
-			do {
-				ps("   ....................................................." + "\n");
-				ps("   :-: - S I T U A C I O N  D E L  P A C I E N T E - :-:" + "\n");
-				ps("   :-:...............................................:-:" + "\n");
-
-				ps("Digite el codigo del paciente: ");
-				codp = LeerCadena();
-				situpac.writeUTF(codp);
-
-				ps("Digite el codigo del medico: ");
-				codm = LeerCadena();
-				situpac.writeUTF(codm);
-
-				ps("Digite el diagnostico del medico: ");
-				enfpac = LeerCadena();
-				situpac.writeUTF(enfpac);
-
-				ps("Desea ingresar otro registro al historial? S/N");
-				ps("\n");
-				op = LeerCadena();
-
-			} while (op.equals("S") || op.equals("s"));
-
-			situpac.close();
-		} catch (IOException ioe) {
-			// Mensaje Error
-			System.err.println("Error paciente");
+			// Envia una excepción en caso de no tener permisos en el archivo.
+			throw new Exception(ERROR_ARCHIVO_PACIENTE);
 		}
 	}
 
-	public static SecretKey getKeyFromPassword(String password, String salt)
-			throws NoSuchAlgorithmException, InvalidKeySpecException {
-		SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-		KeySpec spec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), 65536, 256);
-		SecretKey secret = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
-		return secret;
-	}
-
-	public static IvParameterSpec generateIv() {
-		byte[] iv = new byte[16];
-		new SecureRandom().nextBytes(iv);
-		return new IvParameterSpec(iv);
-	}
-
-	public static void ingresarMedico(String codmed, String nommed, String espmed) throws IOException {
-		// Abre el archivo haciendo referencia al final del mismo.
-		SecretKey key = null;
-		IvParameterSpec ivParameterSpec = generateIv();
-		IvParameterSpec ivParameterSpec2 = null;
-		DataOutputStream datomed = new DataOutputStream(new FileOutputStream(DATO_MED_PATH, true));
-
+	public static void ingresarSituacionPaciente(String codPac, String codMed, String sit) throws Exception {
 		try {
-			key = getKeyFromPassword("asd123", "asd123");
-			for (int i = 0; i < ivParameterSpec.getIV().length; i++) {
-				datomed.writeByte(ivParameterSpec.getIV()[i]);
+			if(!codPac.matches("^([0-9]?[0-9]?[0-9]?[1-9])$")){
+				throw new Exception(ERROR_CODIGO_RANGO_PACIENTE);
 			}
-			datomed.writeUTF(encrypt("AES/CBC/PKCS5Padding", codmed, key, ivParameterSpec));
-			datomed.writeUTF(encrypt("AES/CBC/PKCS5Padding", nommed, key, ivParameterSpec));
-			datomed.writeUTF(encrypt("AES/CBC/PKCS5Padding", espmed, key, ivParameterSpec));
-		} catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException
-				| InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException
-				| InvalidKeySpecException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
-		}
-//		datomed.writeUTF(codmed);
-//		datomed.writeUTF(nommed);
-//		datomed.writeUTF(espmed);
+			
+			if(!codMed.matches("^([0-9]?[0-9]?[0-9]?[1-9])$")){
+				throw new Exception(ERROR_CODIGO_RANGO_MEDICO);
+			}
+			
+			if(!sit.matches("^[a-zA-Z]{1}([\\w\\s,.]{9,199})$")) {
+				throw new Exception(ERROR_FORMATO_SITUACION);
+			}
+			
+			// Abre el archivo haciendo referencia al final del mismo.
+			DataOutputStream archivo = new DataOutputStream(new FileOutputStream(SITU_PAC_PATH, true));
 
-		datomed.close();
-
-		DataInputStream datomedIn = new DataInputStream(new FileInputStream(DATO_MED_PATH));
-		byte[] iv = new byte[16];
-		for (int i = 0; i < 16; i++) {
-			byte asd = datomedIn.readByte();
-			iv[i] = asd;
+			// Escribe en el archivo el historial encriptado.
+			archivo.writeUTF(encriptar(codPac));
+			archivo.writeUTF(encriptar(codMed));
+			archivo.writeUTF(encriptar(sit));
+			
+			archivo.close();
+		} catch (IOException ioe) {
+			// Envia una excepción en caso de no tener permisos en el archivo.
+			throw new Exception(ERROR_ARCHIVO_SITUACION);
 		}
-		ivParameterSpec2 = new IvParameterSpec(iv);
+	}
+
+	public static void ingresarMedico(String codmed, String nommed, String espmed) throws Exception{
 		try {
-			String dato = datomedIn.readUTF();
-			String desenc = decrypt("AES/CBC/PKCS5Padding", dato, getKeyFromPassword("asd123", "asd123"), ivParameterSpec2);
-			System.out.println(desenc);
-			dato = datomedIn.readUTF();
-			desenc = decrypt("AES/CBC/PKCS5Padding", dato, getKeyFromPassword("asd123", "asd123"), ivParameterSpec2);
-			System.out.println(desenc);
-			dato = datomedIn.readUTF();
-			desenc = decrypt("AES/CBC/PKCS5Padding", dato, getKeyFromPassword("asd123", "asd123"), ivParameterSpec2);
-			System.out.println(desenc);
-		} catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException
-				| InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException
-				| InvalidKeySpecException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		datomedIn.close();
-		/*
-		 * try { String op; DataOutputStream datomed = new DataOutputStream(new
-		 * FileOutputStream("C:\\datomed.txt"));
-		 * 
-		 * datomed.writeUTF(codmed); datomed.writeUTF(nommed); datomed.writeUTF(espmed);
-		 * 
-		 * datomed.close();
-		 * 
-		 * do { ps("   ....................................................." + "\n");
-		 * ps("   :-:      - D A T O S   D E L   M E D I C O -      :-:" + "\n");
-		 * ps("   :-:...............................................:-:" + "\n");
-		 * 
-		 * ps("Digite el codigo del medico: "); codmed = LeerCadena();
-		 * datomed.writeUTF(codmed);
-		 * 
-		 * ps("Digite el nombre del medico: "); nommed = LeerCadena();
-		 * datomed.writeUTF(nommed);
-		 * 
-		 * ps("Digite la especializacion del medico: "); espmed = LeerCadena();
-		 * datomed.writeUTF(espmed);
-		 * 
-		 * ps("Desea ingresar otro medico? S/N"); ps("\n");
-		 * 
-		 * op = LeerCadena();
-		 * 
-		 * } while (op.equals("S") || op.equals("s"));
-		 * 
-		 * datomed.close(); } catch (IOException ioe) { //Mensaje de Error }
-		 */
+			// Abre el archivo haciendo referencia al final del mismo.
+			DataOutputStream archivo = new DataOutputStream(new FileOutputStream(DATO_MED_PATH, true));
+		
+			// Escribe en el archivo los datos del medico encriptados.
+			archivo.writeUTF(encriptar(codmed));
+			archivo.writeUTF(encriptar(nommed));
+			archivo.writeUTF(encriptar(espmed));
+			
+			archivo.close();
+		} catch (IOException e) {
+			// Envia una excepción en caso de no tener permisos en el archivo.
+			throw new Exception(ERROR_ARCHIVO_MEDICO);
+		} 
 	}
 
 	@SuppressWarnings("resource")
 	public static void listarPacientesPorMedico() {
 		int sw = 0, sw1 = 0;
-		String codtem, codm = "", nomm = "", espm, codp, codme, enfp, codpa, nompa;
-
+		String codtem = "", codm = "", nomm = "", espm, codp, codme, enfp, codpa, nompa;
+/*
 		ps("Digite el codigo del medico que desea consultar: ");
-		codtem = LeerCadena();
+		codtem = LeerCadena();*/
 
 		sw = 1;
 		while (sw != 0) {
@@ -333,7 +132,7 @@ public class CENTROMEDICO {
 				sw = 1;
 				while (sw != 0) {
 					try {
-						ps("::: El medico " + nomm + " atiende a los siguientes pacientes: " + "\n");
+						//ps("::: El medico " + nomm + " atiende a los siguientes pacientes: " + "\n");
 						DataInputStream situpac = new DataInputStream(new FileInputStream(SITU_PAC_PATH));
 
 						codp = situpac.readUTF();
@@ -353,7 +152,7 @@ public class CENTROMEDICO {
 									// compara el codigo del paciente de la tabla "situpac" con el codigo del
 									// paciente de la tabla "datopac"
 									if (codpa.equals(codp)) {
-										ps("::: Paciente: " + nompa + "\n");
+										//ps("::: Paciente: " + nompa + "\n");
 									}
 								} catch (EOFException e) {
 									sw1 = 0;
@@ -442,52 +241,30 @@ public class CENTROMEDICO {
 		return pacientes;
 	}
 
-	public static String encrypt(String algorithm, String input, SecretKey key, IvParameterSpec iv)
-			throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-			InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+	private static String encriptar(String mensaje) throws Exception {	
+		Key aesKey = new SecretKeySpec(CLAVE.getBytes(), 0, 16, "AES");
 
-		Cipher cipher = Cipher.getInstance(algorithm);
-		cipher.init(Cipher.ENCRYPT_MODE, key, iv);
-		byte[] cipherText = cipher.doFinal(input.getBytes());
-		return Base64.getEncoder().encodeToString(cipherText);
+		Cipher cipher = Cipher.getInstance("AES");
+		cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+
+		byte[] encrypted = cipher.doFinal(mensaje.getBytes());
+			
+		return Base64.getEncoder().encodeToString(encrypted);
 	}
 
-	public static String decrypt(String algorithm, String cipherText, SecretKey key, IvParameterSpec iv)
-			throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-			InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+	private static String desencriptar(String mensaje) throws Exception {
+		Key aesKey = new SecretKeySpec(CLAVE.getBytes(), 0, 16, "AES");
 
-		Cipher cipher = Cipher.getInstance(algorithm);
-		cipher.init(Cipher.DECRYPT_MODE, key, iv);
-		byte[] plainText = cipher.doFinal(Base64.getDecoder().decode(cipherText));
-		return new String(plainText);
+		Cipher cipher = Cipher.getInstance("AES");
+		cipher.init(Cipher.DECRYPT_MODE, aesKey);
+
+		String decrypted = new String(cipher.doFinal(Base64.getDecoder().decode(mensaje)));
+	        
+		return decrypted;
 	}
 
 	public static void main(String args[]) throws Exception {
-
 		VentanaConectar ventanaConectar = new VentanaConectar();
 		ventanaConectar.setVisible(true);
-
-		/*
-		 * int opcion;
-		 * 
-		 * do { ps("   .............................................." + "\n");
-		 * ps("   :-:           CENTRO MEDICO                :-:" + "\n");
-		 * ps("   :-:   >>>>     U N L A M   <<<<            :-:" + "\n");
-		 * ps("   :-:    M E S A   D E    A D M I S I O N    :-:" + "\n");
-		 * ps("   :-:........................................:-:" + "\n");
-		 * ps("   :-: 1.  Ingreso de datos                   :-:" + "\n");
-		 * ps("   :-: 2.  Informes                           :-:" + "\n");
-		 * ps("   :-: 3.  Salir                              :-:" + "\n");
-		 * ps("   .............................................." + "\n");
-		 * ps("   ....Elija la opcion deseada: ");
-		 * 
-		 * opcion = LeerEntero();
-		 * 
-		 * //Seleccion menu ingreso de pacientes if (opcion == 1) menuIngresoDeDatos();
-		 * else if(opcion == 2) // Seleccion menu informes menuInformes(); else
-		 * if(opcion != 3) ps("Debe digitar una opcion del menu" + "\n");
-		 * 
-		 * } while (opcion != 3);
-		 */
 	}
 }

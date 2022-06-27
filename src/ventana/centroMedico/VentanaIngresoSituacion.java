@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -19,10 +20,12 @@ public class VentanaIngresoSituacion extends JFrame{
 	
 	private static VentanaIngresoSituacion instancia;
 	
-	private final String nombreVentana = "Ingresar situación del paciente";
+	private final String NOMBRE_VENTANA = "Ingresar situación del paciente";
+	private final String INGRESAR_NUEVO = "Se ha guardado el historial correctamente, ¿Desea ingresar otro?";
+	
 	
 	private JLabel tituloJL = new JLabel(CENTROMEDICO.TITULO);
-	private JLabel nombreVentanaJL = new JLabel(nombreVentana);
+	private JLabel nombreVentanaJL = new JLabel(NOMBRE_VENTANA);
 	private JLabel codPacienteJL = new JLabel("Codigo del paciente:");
 	private JLabel codMedicoJL = new JLabel("Codigo del medico:");
 	private JLabel sitPacienteJL = new JLabel("Diagnostico del paciente:");
@@ -37,7 +40,7 @@ public class VentanaIngresoSituacion extends JFrame{
 		JPanel pantalla = new Pantalla();
 		
 		setSize(CENTROMEDICO.ALTO, CENTROMEDICO.ANCHO);
-		setTitle(CENTROMEDICO.TITULO + " - " + nombreVentana);
+		setTitle(CENTROMEDICO.TITULO + " - " + NOMBRE_VENTANA);
 		add(pantalla);
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -69,24 +72,40 @@ public class VentanaIngresoSituacion extends JFrame{
 			codMedicoJTF.setBounds(288, 197, 192, 24);
 			sitPacienteJTA.setBounds(288, 224, 192, 64);
 			
-			mensajeJL.setBounds(200, 245, 256, 24);
+			mensajeJL.setBounds(140, 300, 400, 24);
 			mensajeJL.setForeground(Color.RED);
 			
-			ingresarJB.setBounds(192, 304, 256, 32);
-			volverJB.setBounds(192,  356, 256, 32);
+			ingresarJB.setBounds(192, 340, 256, 32);
+			volverJB.setBounds(192,  388, 256, 32);
 
 			ingresarJB.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
-					// CENTROMEDICO.ingresarSituacionPaciente();
+				public void actionPerformed(ActionEvent event) {
+					String codPaciente = codPacienteJTF.getText();
+					String codMedico = codMedicoJTF.getText();
+					String situacion = sitPacienteJTA.getText();
+					
+					try {
+						CENTROMEDICO.ingresarSituacionPaciente(codPaciente, codMedico, situacion);
+					
+						int opcion = JOptionPane.showConfirmDialog(null, INGRESAR_NUEVO, NOMBRE_VENTANA, JOptionPane.YES_NO_OPTION);
+						
+						if(opcion == JOptionPane.NO_OPTION) {
+							cerrarVentana();
+						}
+						
+						resetearVentana();
+						mensajeJL.setText("");
+					}catch(Exception e){
+						mensajeJL.setText(e.getMessage());
+					}
 				}
 			});
 			
 			volverJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					VentanaIngresoSituacion.getInstancia().setVisible(false);
-					VentanaIngreso.getInstancia().setVisible(true);
+					cerrarVentana();
 				}
 			});
 			
@@ -102,5 +121,17 @@ public class VentanaIngresoSituacion extends JFrame{
 			add(ingresarJB);
 			add(volverJB);
 		}
+	}
+	
+	private void resetearVentana() {
+		codPacienteJTF.setText("");
+		codMedicoJTF.setText("");
+		sitPacienteJTA.setText("");
+	}
+	
+	private void cerrarVentana() {
+		resetearVentana();
+		VentanaIngresoSituacion.getInstancia().setVisible(false);
+		VentanaIngreso.getInstancia().setVisible(true);
 	}
 }

@@ -3,7 +3,6 @@ package ventana.centroMedico;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -11,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -26,15 +26,21 @@ public class VentanaIngresoMedico extends JFrame{
 	private static final int MAX_NOMBRE = 21;
 	private static final String REGEX_CODIGO_PATTERN = "^[1-9][0-9]{0,3}$";
 	private static final String REGEX_NOMBRE_PATTERN = "^[A-Za-z0-]+[A-Za-z0-9? ´]*$";
-	private static final String[] ESPECIALIDADES = {"Pediatr�a", "Traumatolog�a", "Cardiolog�a"};
+	private static final String[] ESPECIALIDADES = {"Pediatr�a", "Traumatolog�a", "Cardiolog�a"};
 	
-	private final String nombreVentana = "Ingresar datos del medico";
+	private final String NOMBRE_VENTANA = "Ingresar datos del medico";
+	private final String INGRESAR_NUEVO = "Se han guardado los datos del Medico correctamente, ¿Desea ingresar otro?";
 	
+	// AYUDAS
+	private final String COD_MEDICO_AYUDA = "El codigo del medico debe ser un numero entero entre 1 y 9999.";
+	private final String NOM_MEDICO_AYUDA = "El nombre del medico debe contener un mínimo de 2 caracteres y un máximo de 20, empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";
 	private JLabel tituloJL = new JLabel(CENTROMEDICO.TITULO);
-	private JLabel nombreVentanaJL = new JLabel(nombreVentana);
+	private JLabel nombreVentanaJL = new JLabel(NOMBRE_VENTANA);
 	private JLabel codMedicoJL = new JLabel("Codigo del medico:");
 	private JLabel nomMedicoJL = new JLabel("Nombre del medico:");
 	private JLabel espMedicoJL = new JLabel("Especialización del medico:");
+	private JLabel codMedicoAyuda = new JLabel("?");
+	private JLabel nomMedicoAyuda = new JLabel("?");
 	private JLabel mensajeJL = new JLabel("");
 	private JTextField codMedicoJTF = new JTextField();
 	private JTextField nomMedicoJTF = new JTextField();
@@ -46,7 +52,7 @@ public class VentanaIngresoMedico extends JFrame{
 		JPanel pantalla = new Pantalla();
 		
 		setSize(CENTROMEDICO.ALTO, CENTROMEDICO.ANCHO);
-		setTitle(CENTROMEDICO.TITULO + " - " + nombreVentana);
+		setTitle(CENTROMEDICO.TITULO + " - " + NOMBRE_VENTANA);
 		add(pantalla);
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -125,8 +131,19 @@ public class VentanaIngresoMedico extends JFrame{
 			
 			codMedicoJTF.setBounds(288, 165, 192, 24);
 			nomMedicoJTF.setBounds(288, 197, 192, 24);
-
 			espMedicoJTF.setBounds(288, 229, 192, 24);
+			
+			codMedicoAyuda.setBounds(490, 168, 16, 16);
+			codMedicoAyuda.setToolTipText(COD_MEDICO_AYUDA);
+			codMedicoAyuda.setBackground(Color.LIGHT_GRAY);
+			codMedicoAyuda.setHorizontalAlignment(JLabel.CENTER);
+			codMedicoAyuda.setOpaque(true);
+			
+			nomMedicoAyuda.setBounds(490, 200, 16, 16);
+			nomMedicoAyuda.setToolTipText(NOM_MEDICO_AYUDA);
+			nomMedicoAyuda.setBackground(Color.LIGHT_GRAY);
+			nomMedicoAyuda.setHorizontalAlignment(JLabel.CENTER);
+			nomMedicoAyuda.setOpaque(true);
 			
 			mensajeJL.setBounds(160, 255, 320, 24);
 			mensajeJL.setForeground(Color.RED);
@@ -136,7 +153,7 @@ public class VentanaIngresoMedico extends JFrame{
 
 			ingresarJB.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
+				public void actionPerformed(ActionEvent event) {
 					try {
 						String codigoMedico = codMedicoJTF.getText();
 						String nombreMedico = nomMedicoJTF.getText();
@@ -144,9 +161,18 @@ public class VentanaIngresoMedico extends JFrame{
 						
 						if (verificarDatosMedico(codigoMedico, nombreMedico, especialidadMedico, mensajeJL)) {
 							CENTROMEDICO.ingresarMedico(codigoMedico, nombreMedico, especialidadMedico);
+							
+							int opcion = JOptionPane.showConfirmDialog(null, INGRESAR_NUEVO, NOMBRE_VENTANA, JOptionPane.YES_NO_OPTION);
+						
+							if(opcion == JOptionPane.NO_OPTION) {
+								cerrarVentana();
+							}
+							
+							resetearVentana();
+							mensajeJL.setText("");
 						}
-					} catch(IOException ioe) {
-						mostrarMensaje(mensajeJL, ioe.getMessage());
+					} catch(Exception e) {
+						mostrarMensaje(mensajeJL, e.getMessage());
 					}
 				}
 			});
@@ -154,8 +180,7 @@ public class VentanaIngresoMedico extends JFrame{
 			volverJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					VentanaIngresoMedico.getInstancia().setVisible(false);
-					VentanaIngreso.getInstancia().setVisible(true);
+					cerrarVentana();
 				}
 			});
 			
@@ -165,11 +190,23 @@ public class VentanaIngresoMedico extends JFrame{
 			add(codMedicoJTF);
 			add(nomMedicoJTF);
 			add(espMedicoJTF);
+			add(codMedicoAyuda);
+			add(nomMedicoAyuda);
 			add(mensajeJL);
 			add(tituloJL);
 			add(nombreVentanaJL);
 			add(ingresarJB);
 			add(volverJB);
 		}
+	}
+	
+	private void resetearVentana() {
+		codMedicoJTF.setText("");
+		nomMedicoJTF.setText("");
+	}
+	
+	private void cerrarVentana() {
+		VentanaIngresoMedico.getInstancia().setVisible(false);
+		VentanaIngreso.getInstancia().setVisible(true);
 	}
 }

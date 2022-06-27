@@ -52,13 +52,6 @@ public class VentanaInformesEnfermedadesXMedico extends JFrame{
 		return instancia;
 	}
 	
-	private static void validarCodigoMedico(String codigoMedico) throws Exception {
-		//
-		if(!codigoMedico.matches("^([0-9]?[0-9]?[0-9]?[1-9])$")){
-			throw new Exception("Error Numeros");
-		}
-	}
-	
 	private class Pantalla extends JPanel{
 		
 		private static final long serialVersionUID = 1L;
@@ -87,7 +80,7 @@ public class VentanaInformesEnfermedadesXMedico extends JFrame{
 					try {
 						contenidoDLM.clear();
 
-						validarCodigoMedico(codMedicoJTF.getText()); 
+						//validarCodigoMedico(codMedicoJTF.getText()); 
 						
 						ArrayList<String> enfermedades = CENTROMEDICO.listarEnfermedadesPorMedico(codMedicoJTF.getText());
 		
