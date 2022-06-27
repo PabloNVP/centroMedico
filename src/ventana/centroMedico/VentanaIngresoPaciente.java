@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -18,10 +19,11 @@ public class VentanaIngresoPaciente extends JFrame{
 	
 	private static VentanaIngresoPaciente instancia;
 	
-	private final String nombreVentana = "Ingresar datos del paciente";
+	private final String NOMBRE_VENTANA = "Ingresar datos del paciente";
+	private final String INGRESAR_NUEVO = "Se han guardado los datos del paciente correctamente, ¿Desea ingresar otro?";
 	
 	private JLabel tituloJL = new JLabel(CENTROMEDICO.TITULO);
-	private JLabel nombreVentanaJL = new JLabel(nombreVentana);
+	private JLabel nombreVentanaJL = new JLabel(NOMBRE_VENTANA);
 	private JLabel codPacienteJL = new JLabel("Codigo del paciente:");
 	private JLabel nomPacienteJL = new JLabel("Nombre del paciente:");
 	private JLabel mensajeJL = new JLabel("");
@@ -34,7 +36,7 @@ public class VentanaIngresoPaciente extends JFrame{
 		JPanel pantalla = new Pantalla();
 		
 		setSize(CENTROMEDICO.ALTO, CENTROMEDICO.ANCHO);
-		setTitle(CENTROMEDICO.TITULO + " - " + nombreVentana);
+		setTitle(CENTROMEDICO.TITULO + " - " + NOMBRE_VENTANA);
 		add(pantalla);
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -78,6 +80,14 @@ public class VentanaIngresoPaciente extends JFrame{
 					
 					try {
 						CENTROMEDICO.ingresarPaciente(codPac,nomPac);
+						
+						int opcion = JOptionPane.showConfirmDialog(null, INGRESAR_NUEVO, NOMBRE_VENTANA, JOptionPane.YES_NO_OPTION);
+						
+						if(opcion == JOptionPane.NO_OPTION) {
+							cerrarVentana();
+						}
+						
+						resetearVentana();
 						mensajeJL.setText("");
 					} catch (Exception e) {
 						mensajeJL.setText(e.getMessage());
@@ -88,8 +98,7 @@ public class VentanaIngresoPaciente extends JFrame{
 			volverJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					VentanaIngresoPaciente.getInstancia().setVisible(false);
-					VentanaIngreso.getInstancia().setVisible(true);
+					cerrarVentana();
 				}
 			});
 			
@@ -103,5 +112,15 @@ public class VentanaIngresoPaciente extends JFrame{
 			add(ingresarJB);
 			add(volverJB);
 		}
+	}
+	
+	private void resetearVentana() {
+		codPacienteJTF.setText("");
+		nomPacienteJPF.setText("");
+	}
+	
+	private void cerrarVentana() {
+		VentanaIngresoPaciente.getInstancia().setVisible(false);
+		VentanaIngreso.getInstancia().setVisible(true);
 	}
 }

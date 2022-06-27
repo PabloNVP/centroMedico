@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.regex.Pattern;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -22,18 +21,9 @@ public class VentanaIngresoMedico extends JFrame{
 	
 	private static VentanaIngresoMedico instancia;
 
-	private static final int MIN_NOMBRE = 1;
-	private static final int MAX_NOMBRE = 21;
-	private static final String REGEX_CODIGO_PATTERN = "^[1-9][0-9]{0,3}$";
-	private static final String REGEX_NOMBRE_PATTERN = "^[A-Za-z0-]+[A-Za-z0-9? ´]*$";
-	private static final String[] ESPECIALIDADES = {"Pediatr�a", "Traumatolog�a", "Cardiolog�a"};
-	
 	private final String NOMBRE_VENTANA = "Ingresar datos del medico";
 	private final String INGRESAR_NUEVO = "Se han guardado los datos del Medico correctamente, ¿Desea ingresar otro?";
 	
-	// AYUDAS
-	private final String COD_MEDICO_AYUDA = "El codigo del medico debe ser un numero entero entre 1 y 9999.";
-	private final String NOM_MEDICO_AYUDA = "El nombre del medico debe contener un mínimo de 2 caracteres y un máximo de 20, empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";
 	private JLabel tituloJL = new JLabel(CENTROMEDICO.TITULO);
 	private JLabel nombreVentanaJL = new JLabel(NOMBRE_VENTANA);
 	private JLabel codMedicoJL = new JLabel("Codigo del medico:");
@@ -44,13 +34,14 @@ public class VentanaIngresoMedico extends JFrame{
 	private JLabel mensajeJL = new JLabel("");
 	private JTextField codMedicoJTF = new JTextField();
 	private JTextField nomMedicoJTF = new JTextField();
-	private JComboBox<String> espMedicoJTF = new JComboBox<String>(ESPECIALIDADES);
+	private JComboBox<String> espMedicoJTF = new JComboBox<String>(CENTROMEDICO.ESPECIALIDADES);
 	private JButton ingresarJB = new JButton("Ingresar");
 	private JButton volverJB = new JButton("Volver");
 	
 	private VentanaIngresoMedico(){
 		JPanel pantalla = new Pantalla();
-		
+		// Declara el tiempo de respuesta del mouse sobre la etiqueta de ayuda.
+		javax.swing.ToolTipManager.sharedInstance().setInitialDelay(10);
 		setSize(CENTROMEDICO.ALTO, CENTROMEDICO.ANCHO);
 		setTitle(CENTROMEDICO.TITULO + " - " + NOMBRE_VENTANA);
 		add(pantalla);
@@ -66,52 +57,8 @@ public class VentanaIngresoMedico extends JFrame{
 		return instancia;
 	}
 	
-	public static boolean verificarDatosMedico(String codigoMedico, String nombreMedico, String especialidadMedico, JLabel label) {
-		if (!verificarCodigo(codigoMedico)) {
-			mostrarMensaje(label, CENTROMEDICO.ERROR_CODIGO_RANGO_MEDICO);
-			return false;
-		}
-		
-		if (!verificarRangoNombre(nombreMedico)) {
-			mostrarMensaje(label, CENTROMEDICO.ERROR_NOMBRE_RANGO_MEDICO);
-			return false;
-		}
-		
-		if (!verificarFormatoNombre(nombreMedico)) {
-			mostrarMensaje(label, CENTROMEDICO.ERROR_NOMBRE_FORMATO_MEDICO);
-			return false;
-		}
-		
-		if (!verificarEspecialidad(especialidadMedico)) {
-			mostrarMensaje(label, CENTROMEDICO.ERROR_ESPECIALIDAD_VALORES_MEDICO);
-			return false;
-		}
-		
-		mostrarMensaje(label, "");
-		
-		return true;
-	}
-	
-	private static boolean verificarCodigo(String codigoMedico) {
-		return Pattern.matches(REGEX_CODIGO_PATTERN, codigoMedico);
-	}
-	
-	private static boolean verificarRangoNombre(String nombreMedico) {
-		int longitud = nombreMedico.length();
-		
-		return longitud > MIN_NOMBRE && longitud < MAX_NOMBRE;
-	}
-	
-	private static boolean verificarFormatoNombre(String nombreMedico) {
-		return Pattern.matches(REGEX_NOMBRE_PATTERN, nombreMedico);
-	}
-	
-	private static boolean verificarEspecialidad(String especialidadMedico) {
-		return Arrays.stream(ESPECIALIDADES).anyMatch(especialidad -> especialidad.equals(especialidadMedico));
-	}
-	
 	private static void mostrarMensaje(JLabel label, String mensaje) {
-		label.setText(mensaje);
+		label.setText("<html>" + mensaje + "</html>");
 	}
 	
 	
@@ -134,18 +81,18 @@ public class VentanaIngresoMedico extends JFrame{
 			espMedicoJTF.setBounds(288, 229, 192, 24);
 			
 			codMedicoAyuda.setBounds(490, 168, 16, 16);
-			codMedicoAyuda.setToolTipText(COD_MEDICO_AYUDA);
+			codMedicoAyuda.setToolTipText(CENTROMEDICO.COD_MEDICO_AYUDA);
 			codMedicoAyuda.setBackground(Color.LIGHT_GRAY);
 			codMedicoAyuda.setHorizontalAlignment(JLabel.CENTER);
 			codMedicoAyuda.setOpaque(true);
 			
 			nomMedicoAyuda.setBounds(490, 200, 16, 16);
-			nomMedicoAyuda.setToolTipText(NOM_MEDICO_AYUDA);
+			nomMedicoAyuda.setToolTipText(CENTROMEDICO.NOM_MEDICO_AYUDA);
 			nomMedicoAyuda.setBackground(Color.LIGHT_GRAY);
 			nomMedicoAyuda.setHorizontalAlignment(JLabel.CENTER);
 			nomMedicoAyuda.setOpaque(true);
 			
-			mensajeJL.setBounds(160, 255, 320, 24);
+			mensajeJL.setBounds(100, 260, 460, 32);
 			mensajeJL.setForeground(Color.RED);
 			
 			ingresarJB.setBounds(192, 304, 256, 32);
@@ -157,20 +104,18 @@ public class VentanaIngresoMedico extends JFrame{
 					try {
 						String codigoMedico = codMedicoJTF.getText();
 						String nombreMedico = nomMedicoJTF.getText();
-						String especialidadMedico = ESPECIALIDADES[espMedicoJTF.getSelectedIndex()];
+						String especialidadMedico = CENTROMEDICO.ESPECIALIDADES[espMedicoJTF.getSelectedIndex()];
 						
-						if (verificarDatosMedico(codigoMedico, nombreMedico, especialidadMedico, mensajeJL)) {
-							CENTROMEDICO.ingresarMedico(codigoMedico, nombreMedico, especialidadMedico);
+						CENTROMEDICO.ingresarMedico(codigoMedico, nombreMedico, especialidadMedico);
 							
-							int opcion = JOptionPane.showConfirmDialog(null, INGRESAR_NUEVO, NOMBRE_VENTANA, JOptionPane.YES_NO_OPTION);
+						int opcion = JOptionPane.showConfirmDialog(null, INGRESAR_NUEVO, NOMBRE_VENTANA, JOptionPane.YES_NO_OPTION);
 						
-							if(opcion == JOptionPane.NO_OPTION) {
-								cerrarVentana();
-							}
-							
-							resetearVentana();
-							mensajeJL.setText("");
+						if(opcion == JOptionPane.NO_OPTION) {
+							cerrarVentana();
 						}
+							
+						resetearVentana();
+						mostrarMensaje(mensajeJL, "");
 					} catch(Exception e) {
 						mostrarMensaje(mensajeJL, e.getMessage());
 					}

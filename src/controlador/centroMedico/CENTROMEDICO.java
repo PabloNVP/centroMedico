@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.security.Key;
 import javax.crypto.Cipher;
@@ -31,21 +32,47 @@ public class CENTROMEDICO {
 	public final static String ERROR_ESPECIALIDAD_VALORES_MEDICO = "La especialidad solo puede ser Pediatría, Traumatología o Cardiología.";
 	
 	public final static String ERROR_CODIGO_RANGO_PACIENTE = "El código del paciente debe ser un número entre 1 y 9999.";
+	public final static String ERROR_NOMBRE_RANGO_PACIENTE = "El nombre del paciente debe contener un mínimo de 2 caracteres y un máximo de 20.";
+	public final static String ERROR_NOMBRE_FORMATO_PACIENTE = "El nombre del paciente debe empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";
 	public final static String ERROR_FORMATO_SITUACION = "El diagnostico del paciente debe contener un minimo de 10 y un maximo de 200 caracteres.";
 	
 	public final static String ERROR_ARCHIVO_PACIENTE = "No se pudo guardar los datos del paciente en el archivo.";
 	public final static String ERROR_ARCHIVO_MEDICO = "No se pudo guardar los datos del medico en el archivo.";
 	public final static String ERROR_ARCHIVO_SITUACION = "No se pudo guardar el historial en el archivo.";
 	
+	// Mensajes de Ayuda
+	public final static String COD_MEDICO_AYUDA = "El codigo del medico debe ser un numero entero entre 1 y 9999.";
+	public final static String NOM_MEDICO_AYUDA = "El nombre del medico debe contener un mínimo de 2 caracteres y un máximo de 20, empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";
+	public final static String COD_PACIENTE_AYUDA = "El codigo del paciente debe ser un numero entero entre 1 y 9999.";
+	public final static String NOM_PACIENTE_AYUDA = "El nombre del paciente debe contener un mínimo de 2 caracteres y un máximo de 20, empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";	
+	
 	// Path de archivos
 	private static final String DATO_MED_PATH = "./datomed.txt";
 	private static final String DATO_PAC_PATH = "./datopac.txt";
 	private static final String SITU_PAC_PATH = "./situpac.txt";
 
+	//Especialidades de los Medicos
+	public static final String[] ESPECIALIDADES = {"Pediatria", "Traumatologia", "Cardiologia"};
+	
 	// Clave de Encriptado
 	private static final String CLAVE="AnalisiSdeSoftwarE2022";
 
 	public static void ingresarPaciente(String codPac, String nomPac) throws Exception{
+		// Valida el codigo del paciente.
+		if(!esCodigoValido(codPac)){
+			throw new Exception(ERROR_CODIGO_RANGO_PACIENTE);
+		}
+		
+		// Valida el Rango del nombre del paciente.
+		if(!esRangoNombreValido(nomPac)) {
+			throw new Exception(ERROR_NOMBRE_RANGO_PACIENTE);
+		}
+		
+		// Valida el Formato del nombre del paciente.
+		if(!esFormatoNombreValido(nomPac)) {
+			throw new Exception(ERROR_NOMBRE_FORMATO_PACIENTE);
+		}
+		
 		try {
 			// Abre el archivo haciendo referencia al final del mismo.
 			DataOutputStream archivo = new DataOutputStream(new FileOutputStream(DATO_PAC_PATH, true));
@@ -62,19 +89,22 @@ public class CENTROMEDICO {
 	}
 
 	public static void ingresarSituacionPaciente(String codPac, String codMed, String sit) throws Exception {
+		// Valida el codigo del paciente.
+		if(!esCodigoValido(codPac)){
+			throw new Exception(ERROR_CODIGO_RANGO_PACIENTE);
+		}
+		
+		// Valida el codigo del medico.
+		if(!esCodigoValido(codMed)){
+			throw new Exception(ERROR_CODIGO_RANGO_MEDICO);
+		}
+		
+		// Valida el formato de la situacion.
+		if(!esRangoNombreValido(sit)) {
+			throw new Exception(ERROR_FORMATO_SITUACION);
+		}
+		
 		try {
-			if(!codPac.matches("^([0-9]?[0-9]?[0-9]?[1-9])$")){
-				throw new Exception(ERROR_CODIGO_RANGO_PACIENTE);
-			}
-			
-			if(!codMed.matches("^([0-9]?[0-9]?[0-9]?[1-9])$")){
-				throw new Exception(ERROR_CODIGO_RANGO_MEDICO);
-			}
-			
-			if(!sit.matches("^[a-zA-Z]{1}([\\w\\s,.]{9,199})$")) {
-				throw new Exception(ERROR_FORMATO_SITUACION);
-			}
-			
 			// Abre el archivo haciendo referencia al final del mismo.
 			DataOutputStream archivo = new DataOutputStream(new FileOutputStream(SITU_PAC_PATH, true));
 
@@ -91,6 +121,26 @@ public class CENTROMEDICO {
 	}
 
 	public static void ingresarMedico(String codmed, String nommed, String espmed) throws Exception{
+		// Valida el codigo del medico.
+		if(!esCodigoValido(codmed)){
+			throw new Exception(ERROR_CODIGO_RANGO_MEDICO);
+		}
+		
+		// Valida el Rango del nombre del medico.
+		if(!esRangoNombreValido(nommed)) {
+			throw new Exception(ERROR_NOMBRE_RANGO_MEDICO);
+		}
+		
+		// Valida el Formato del nombre del medico.
+		if(!esFormatoNombreValido(nommed)) {
+			throw new Exception(ERROR_NOMBRE_FORMATO_MEDICO);
+		}
+		
+		// Valida la especialidad del medico.
+		if(!esEspecialidadValida(espmed)) {
+			throw new Exception(ERROR_ESPECIALIDAD_VALORES_MEDICO);
+		}
+		
 		try {
 			// Abre el archivo haciendo referencia al final del mismo.
 			DataOutputStream archivo = new DataOutputStream(new FileOutputStream(DATO_MED_PATH, true));
@@ -108,9 +158,9 @@ public class CENTROMEDICO {
 	}
 
 	@SuppressWarnings("resource")
-	public static void listarPacientesPorMedico() {
+	public static void listarPacientesPorMedico(String codMed) {
 		int sw = 0, sw1 = 0;
-		String codtem = "", codm = "", nomm = "", espm, codp, codme, enfp, codpa, nompa;
+		String codm = "", nomm = "", espm, codp, codme, enfp, codpa, nompa;
 /*
 		ps("Digite el codigo del medico que desea consultar: ");
 		codtem = LeerCadena();*/
@@ -128,7 +178,7 @@ public class CENTROMEDICO {
 			}
 
 			// compara el codigo extraido de la tabla "datomed" con el codigo digitado
-			if (codm.equals(codtem)) {
+			if (codm.equals(codMed)) {
 				sw = 1;
 				while (sw != 0) {
 					try {
@@ -140,7 +190,7 @@ public class CENTROMEDICO {
 						enfp = situpac.readUTF();
 
 						// compara el codigo medico de la tabla "datomed" con el de la tabla "situpac"
-						if (codme.equals(codtem)) {
+						if (codme.equals(codMed)) {
 							DataInputStream datopac = new DataInputStream(new FileInputStream(DATO_PAC_PATH));
 
 							sw1 = 1;
@@ -172,62 +222,59 @@ public class CENTROMEDICO {
 	}
 
 	public static ArrayList<String> listarEnfermedadesPorMedico(String codigo) throws Exception {
-		// String codtem;
+		
+		// Valida el codigo del medico.
+		if(!codigo.matches("^[1-9][0-9]{0,3}$")){
+			throw new Exception(ERROR_CODIGO_RANGO_MEDICO);
+		}
+		
 		// Variables de corte de control
 		int sw = 0, sw1 = 0;
 
 		// Variables usadas en la lectura de datos.
 		String codm = "", codme = "", enfp = "", nomm = "", espm = "", codp;
 
-		// ps("Digite el codigo del medico que desea consultar: ");
-		// codtem = LeerCadena();
-
 		// Arreglo de información
-		ArrayList<String> pacientes = new ArrayList<String>();
+		ArrayList<String> enfermedades = new ArrayList<String>();
 
 		try {
 			DataInputStream datomed = new DataInputStream(new FileInputStream(DATO_MED_PATH));
+			
 			sw1 = 1;
-
 			while (sw1 != 0) {
 				try {
-					codm = datomed.readUTF();
-					nomm = datomed.readUTF();
-					espm = datomed.readUTF();
+					codm = desencriptar(datomed.readUTF());
+					nomm = desencriptar(datomed.readUTF());
+					espm = desencriptar(datomed.readUTF());
 
 					// compara el codigo digitado
 					// con el codigo del medico de la
 					// tabla "datomed"
 					if (codm.equals(codigo)) {
-						// ps("El medico " + nomm + " trata las siguientes enfermedades:" + "\n");
-						pacientes.add("Nombre del Medico: " + nomm);
-
-						DataInputStream situpac = new DataInputStream(new FileInputStream("C:\\situpac.txt"));
-
-						pacientes.add("Nombre de las enfermedades: ");
+						enfermedades.add("Nombre del Medico: " + nomm);
+						enfermedades.add("Nombre de las enfermedades: ");
+						
+						DataInputStream situpac = new DataInputStream(new FileInputStream(SITU_PAC_PATH));
 
 						sw = 1;
-
 						while (sw != 0) {
 							try {
-								codp = situpac.readUTF();
-								codme = situpac.readUTF();
-								enfp = situpac.readUTF();
+								codp = desencriptar(situpac.readUTF());
+								codme = desencriptar(situpac.readUTF());
+								enfp = desencriptar(situpac.readUTF());
 
 								// compara el codigo del medico
 								// de la tabla "datomed"
 								// con el codigo del medico en la
 								// tabla "situpac"
 								if (codme.equals(codigo)) {
-									// ps(">>>> " + enfp + "\n");
-									pacientes.add("   " + enfp);
+									enfermedades.add("   " + enfp);
 								}
 							} catch (EOFException e) {
 								sw = 0;
 							}
-
-							situpac.close();
 						}
+						situpac.close();
 					}
 				} catch (EOFException e) {
 					sw1 = 0;
@@ -235,12 +282,39 @@ public class CENTROMEDICO {
 			}
 			datomed.close();
 		} catch (FileNotFoundException e) {
-			throw new Exception("louc");
+			sw = 0;
 		}
 
-		return pacientes;
+		return enfermedades;
 	}
+	
+	/**
+	 *  VALIDACIONES
+	 */
+	private static boolean esCodigoValido(String codigo) {
+		return codigo.matches("^[1-9][0-9]{0,3}$");
+	}
+	
+	private static boolean esRangoNombreValido(String nombreMedico) {
+		int longitud = nombreMedico.length();
+		
+		return longitud > 1 && longitud < 21;
+	}
+	
+	private static boolean esFormatoNombreValido(String nombreMedico) {
+		return nombreMedico.matches("^[A-Za-z0-]+[A-Za-z0-9? ´]*$");
+	}
+	
+	private static boolean esEspecialidadValida(String especialidadMedico) {
+		return Arrays.stream(ESPECIALIDADES).anyMatch(especialidad -> especialidad.equals(especialidadMedico));
+	}
+	/**
+	 * FIN VALIDACIONES
+	 */
 
+	/**
+	 *  SEGURIDAD
+	 */
 	private static String encriptar(String mensaje) throws Exception {	
 		Key aesKey = new SecretKeySpec(CLAVE.getBytes(), 0, 16, "AES");
 
@@ -262,6 +336,9 @@ public class CENTROMEDICO {
 	        
 		return decrypted;
 	}
+	/**
+	 *  FIN SEGURIDAD
+	 */
 
 	public static void main(String args[]) throws Exception {
 		VentanaConectar ventanaConectar = new VentanaConectar();

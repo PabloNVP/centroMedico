@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -68,7 +67,7 @@ public class VentanaInformesEnfermedadesXMedico extends JFrame{
 			resultadoJL.setBounds(128, 164, 406, 192);
 			resultadoJL.setEnabled(false);
 			
-			mensajeJL.setBounds(172, 370, 340, 24);
+			mensajeJL.setBounds(140, 370, 420, 24);
 			mensajeJL.setForeground(Color.RED);
 			
 			buscarJB.setBounds(420, 123, 128, 32);
@@ -79,18 +78,15 @@ public class VentanaInformesEnfermedadesXMedico extends JFrame{
 				public void actionPerformed(ActionEvent event) {
 					try {
 						contenidoDLM.clear();
-
-						//validarCodigoMedico(codMedicoJTF.getText()); 
 						
 						ArrayList<String> enfermedades = CENTROMEDICO.listarEnfermedadesPorMedico(codMedicoJTF.getText());
 		
 						if( enfermedades.size() == 0)
 							contenidoDLM.add(0,"No existe ningun medico con ese codigo.");
 						else 
-							((List<String>) contenidoDLM).addAll(enfermedades);
+							contenidoDLM.addAll(enfermedades);
 							
 						mensajeJL.setText("");
-						
 					}catch(Exception e) {
 						mensajeJL.setText(e.getMessage());
 						codMedicoJTF.setText("");
