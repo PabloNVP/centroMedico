@@ -34,17 +34,19 @@ public class CENTROMEDICO {
 	public final static String ERROR_CODIGO_RANGO_PACIENTE = "El código del paciente debe ser un número entre 1 y 9999.";
 	public final static String ERROR_NOMBRE_RANGO_PACIENTE = "El nombre del paciente debe contener un mínimo de 2 caracteres y un máximo de 20.";
 	public final static String ERROR_NOMBRE_FORMATO_PACIENTE = "El nombre del paciente debe empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";
-	public final static String ERROR_FORMATO_SITUACION = "El diagnostico del paciente debe contener un minimo de 10 y un maximo de 200 caracteres.";
+	public final static String ERROR_RANGO_SITUACION = "El diagnostico del paciente debe contener un minimo de 10 y un maximo de 200 caracteres.";
+	public final static String ERROR_FORMATO_SITUACION = "El diagnostico del paciente debe empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";
 	
 	public final static String ERROR_ARCHIVO_PACIENTE = "No se pudo guardar los datos del paciente en el archivo.";
 	public final static String ERROR_ARCHIVO_MEDICO = "No se pudo guardar los datos del medico en el archivo.";
 	public final static String ERROR_ARCHIVO_SITUACION = "No se pudo guardar el historial en el archivo.";
 	
 	// Mensajes de Ayuda
-	public final static String COD_MEDICO_AYUDA = "El codigo del medico debe ser un numero entero entre 1 y 9999.";
-	public final static String NOM_MEDICO_AYUDA = "El nombre del medico debe contener un mínimo de 2 caracteres y un máximo de 20, empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";
-	public final static String COD_PACIENTE_AYUDA = "El codigo del paciente debe ser un numero entero entre 1 y 9999.";
-	public final static String NOM_PACIENTE_AYUDA = "El nombre del paciente debe contener un mínimo de 2 caracteres y un máximo de 20, empezar con una letra y solo puede contener caracteres alfanúmericos, tildes y espacios.";	
+	public final static String COD_MEDICO_AYUDA = "<html> El codigo del medico debe ser un <br>numero entero entre 1 y 9999.</html>";
+	public final static String NOM_MEDICO_AYUDA = "<html>El nombre del medico debe contener un mínimo de 2 caracteres <br>y un máximo de 20, empezar con una letra y solo puede contener <br>caracteres alfanúmericos, tildes y espacios.</html>";
+	public final static String COD_PACIENTE_AYUDA = "<html>El codigo del paciente debe ser un <br>numero entero entre 1 y 9999.</html>";
+	public final static String NOM_PACIENTE_AYUDA = "<html>El nombre del paciente debe contener un mínimo de 2 caracteres <br>y un máximo de 20, empezar con una letra y solo puede contener <br>caracteres alfanúmericos, tildes y espacios.</html>";	
+	public final static String SIT_PACIENTE_AYUDA = "<html>El diagnostico del paciente debe contener un mínimo de 10 caracteres <br>y un máximo de 200, empezar con una letra y solo puede contener <br>caracteres alfanúmericos, tildes y espacios.</html>";
 	
 	// Path de archivos
 	private static final String DATO_MED_PATH = "./datomed.txt";
@@ -64,7 +66,7 @@ public class CENTROMEDICO {
 		}
 		
 		// Valida el Rango del nombre del paciente.
-		if(!esRangoNombreValido(nomPac)) {
+		if(!esRangoNombreValido(nomPac, 1, 21)) {
 			throw new Exception(ERROR_NOMBRE_RANGO_PACIENTE);
 		}
 		
@@ -99,8 +101,13 @@ public class CENTROMEDICO {
 			throw new Exception(ERROR_CODIGO_RANGO_MEDICO);
 		}
 		
+		// Valida el Rango del nombre del paciente.
+		if(!esRangoNombreValido(sit, 9, 201)) {
+			throw new Exception(ERROR_RANGO_SITUACION);
+		}
+		
 		// Valida el formato de la situacion.
-		if(!esRangoNombreValido(sit)) {
+		if(!esFormatoNombreValido(sit)) {
 			throw new Exception(ERROR_FORMATO_SITUACION);
 		}
 		
@@ -127,7 +134,7 @@ public class CENTROMEDICO {
 		}
 		
 		// Valida el Rango del nombre del medico.
-		if(!esRangoNombreValido(nommed)) {
+		if(!esRangoNombreValido(nommed, 1, 21)) {
 			throw new Exception(ERROR_NOMBRE_RANGO_MEDICO);
 		}
 		
@@ -323,14 +330,14 @@ public class CENTROMEDICO {
 		return codigo.matches("^[1-9][0-9]{0,3}$");
 	}
 	
-	private static boolean esRangoNombreValido(String nombreMedico) {
+	private static boolean esRangoNombreValido(String nombreMedico, int min, int max) {
 		int longitud = nombreMedico.length();
 		
-		return longitud > 1 && longitud < 21;
+		return longitud > min && longitud < max;
 	}
 	
 	private static boolean esFormatoNombreValido(String nombreMedico) {
-		return nombreMedico.matches("^[A-Za-z0-]+[A-Za-z0-9? ´]*$");
+		return nombreMedico.matches("^[A-Za-záéíóúÁÉÍÓÚ][A-Za-z0-9 áéíóúÁÉÍÓÚ]*$");
 	}
 	
 	private static boolean esEspecialidadValida(String especialidadMedico) {

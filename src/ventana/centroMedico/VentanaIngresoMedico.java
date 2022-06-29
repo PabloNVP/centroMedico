@@ -1,6 +1,7 @@
 package ventana.centroMedico;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
@@ -38,14 +39,14 @@ public class VentanaIngresoMedico extends JFrame{
 	
 	private VentanaIngresoMedico(){
 		JPanel pantalla = new Pantalla();
-		// Declara el tiempo de respuesta del mouse sobre la etiqueta de ayuda.
-		javax.swing.ToolTipManager.sharedInstance().setInitialDelay(10);
 		setSize(CENTROMEDICO.ALTO, CENTROMEDICO.ANCHO);
 		setTitle(CENTROMEDICO.TITULO + " - " + NOMBRE_VENTANA);
 		add(pantalla);
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		// Declara el tiempo de respuesta del mouse sobre la etiqueta de ayuda.
+		javax.swing.ToolTipManager.sharedInstance().setInitialDelay(10);
 	}
 	
 	public static VentanaIngresoMedico getInstancia() {
@@ -67,8 +68,10 @@ public class VentanaIngresoMedico extends JFrame{
 		public Pantalla() {
 			setLayout(null);
 			
-			tituloJL.setBounds(240, 64, 256, 32);
-			nombreVentanaJL.setBounds(226, 96, 256, 32);
+			tituloJL.setBounds(170, 64, 320, 32);
+			tituloJL.setFont(new Font("Serif", Font.PLAIN, 22));
+			nombreVentanaJL.setBounds(190, 96, 320, 32);
+			nombreVentanaJL.setFont(new Font("Serif", Font.PLAIN, 18));
 			
 			codMedicoJL.setBounds(128, 160, 192, 32);
 			nomMedicoJL.setBounds(128, 192, 192, 32);
@@ -113,7 +116,6 @@ public class VentanaIngresoMedico extends JFrame{
 						}
 							
 						resetearVentana();
-						mostrarMensaje(mensajeJL, "");
 					} catch(Exception e) {
 						mostrarMensaje(mensajeJL, e.getMessage());
 					}
@@ -147,9 +149,11 @@ public class VentanaIngresoMedico extends JFrame{
 	private void resetearVentana() {
 		codMedicoJTF.setText("");
 		nomMedicoJTF.setText("");
+		mensajeJL.setText("");
 	}
 	
 	private void cerrarVentana() {
+		resetearVentana();
 		VentanaIngresoMedico.getInstancia().setVisible(false);
 		VentanaIngreso.getInstancia().setVisible(true);
 	}

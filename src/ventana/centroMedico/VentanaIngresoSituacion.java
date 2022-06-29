@@ -1,6 +1,7 @@
 package ventana.centroMedico;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -9,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -23,7 +25,6 @@ public class VentanaIngresoSituacion extends JFrame{
 	private final String NOMBRE_VENTANA = "Ingresar situación del paciente";
 	private final String INGRESAR_NUEVO = "Se ha guardado el historial correctamente, ¿Desea ingresar otro?";
 	
-	
 	private JLabel tituloJL = new JLabel(CENTROMEDICO.TITULO);
 	private JLabel nombreVentanaJL = new JLabel(NOMBRE_VENTANA);
 	private JLabel codPacienteJL = new JLabel("Codigo del paciente:");
@@ -32,7 +33,8 @@ public class VentanaIngresoSituacion extends JFrame{
 	private JLabel mensajeJL = new JLabel("");
 	private JTextField codPacienteJTF = new JTextField();
 	private JTextField codMedicoJTF = new JTextField();
-	private JTextArea sitPacienteJTA = new JTextArea();
+	private JTextArea sitPacienteJTA = new JTextArea(5, 4);
+	private JScrollPane sitPacienteJSP = new JScrollPane(sitPacienteJTA);
 	private JButton ingresarJB = new JButton("Ingresar");
 	private JButton volverJB = new JButton("Volver");
 	
@@ -61,8 +63,10 @@ public class VentanaIngresoSituacion extends JFrame{
 		public Pantalla() {
 			setLayout(null);
 			
-			tituloJL.setBounds(240, 64, 256, 32);
-			nombreVentanaJL.setBounds(208, 96, 256, 32);
+			tituloJL.setBounds(170, 64, 320, 32);
+			tituloJL.setFont(new Font("Serif", Font.PLAIN, 22));
+			nombreVentanaJL.setBounds(180, 96, 360, 32);
+			nombreVentanaJL.setFont(new Font("Serif", Font.PLAIN, 18));
 			
 			codPacienteJL.setBounds(128, 160, 192, 32);
 			codMedicoJL.setBounds(128, 192, 192, 32);
@@ -70,9 +74,10 @@ public class VentanaIngresoSituacion extends JFrame{
 			
 			codPacienteJTF.setBounds(288, 165, 192, 24);
 			codMedicoJTF.setBounds(288, 197, 192, 24);
-			sitPacienteJTA.setBounds(288, 224, 192, 64);
+			sitPacienteJSP.setBounds(288, 224, 192, 64);
+			sitPacienteJTA.setLineWrap(true);
 			
-			mensajeJL.setBounds(140, 300, 400, 24);
+			mensajeJL.setBounds(140, 300, 400, 32);
 			mensajeJL.setForeground(Color.RED);
 			
 			ingresarJB.setBounds(192, 340, 256, 32);
@@ -95,9 +100,8 @@ public class VentanaIngresoSituacion extends JFrame{
 						}
 						
 						resetearVentana();
-						mensajeJL.setText("");
 					}catch(Exception e){
-						mensajeJL.setText(e.getMessage());
+						mensajeJL.setText("<html>" + e.getMessage() + "</html>");
 					}
 				}
 			});
@@ -114,7 +118,7 @@ public class VentanaIngresoSituacion extends JFrame{
 			add(sitPacienteJL);
 			add(codPacienteJTF);
 			add(codMedicoJTF);
-			add(sitPacienteJTA);
+			add(sitPacienteJSP);
 			add(mensajeJL);
 			add(tituloJL);
 			add(nombreVentanaJL);
@@ -127,6 +131,7 @@ public class VentanaIngresoSituacion extends JFrame{
 		codPacienteJTF.setText("");
 		codMedicoJTF.setText("");
 		sitPacienteJTA.setText("");
+		mensajeJL.setText("");
 	}
 	
 	private void cerrarVentana() {

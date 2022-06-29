@@ -1,6 +1,7 @@
 package ventana.centroMedico;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -56,9 +57,10 @@ public class VentanaConectar extends JFrame{
 		public Pantalla() {
 			setLayout(null);
 			
-			tituloJL.setBounds(240, 64, 256, 32);
-			nombreVentanaJL.setBounds(290, 96, 256, 32);
-			
+			tituloJL.setBounds(170, 64, 320, 32);
+			tituloJL.setFont(new Font("Serif", Font.PLAIN, 22));
+			nombreVentanaJL.setBounds(275, 96, 256, 32);
+			nombreVentanaJL.setFont(new Font("Serif", Font.PLAIN, 18));
 			usuarioJL.setBounds(208, 160, 128, 32);
 			contrasenaJL.setBounds(192, 192, 96, 32);
 			
@@ -75,12 +77,11 @@ public class VentanaConectar extends JFrame{
 			ingresarJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-//					!puedeIngresarUsuario(usuarioJTF.getText(), String.valueOf(contrasenaJPF.getPassword()))
-					if(!puedeIngresarUsuario("centroMedico", "productoFinal2022")) {
-						mensajeJL.setText(ERROR_LOGIN);	
-					}else {
+					if(puedeIngresarUsuario(usuarioJTF.getText(), String.valueOf(contrasenaJPF.getPassword()))) {
 						VentanaInicio.getInstancia().setVisible(true);
-						dispose();
+						dispose();	
+					}else {
+						mensajeJL.setText(ERROR_LOGIN);
 					}
 				}
 			});

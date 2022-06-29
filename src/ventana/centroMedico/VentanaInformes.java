@@ -1,5 +1,6 @@
 package ventana.centroMedico;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 
 import java.awt.event.ActionListener;
@@ -51,8 +52,10 @@ public class VentanaInformes extends JFrame{
 		public Pantalla() {
 			setLayout(null);
 			
-			tituloJL.setBounds(240, 64, 256, 32);
-			nombreVentanaJL.setBounds(292, 96, 256, 32);
+			tituloJL.setBounds(170, 64, 320, 32);
+			tituloJL.setFont(new Font("Serif", Font.PLAIN, 22));
+			nombreVentanaJL.setBounds(275, 96, 256, 32);
+			nombreVentanaJL.setFont(new Font("Serif", Font.PLAIN, 18));
 			
 			listarPacientesJB.setBounds(162, 192, 304, 32);
 			enfermedadesMedicoJB.setBounds(162,  256, 304, 32);

@@ -1,6 +1,7 @@
 package ventana.centroMedico;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -57,8 +58,10 @@ public class VentanaIngresoPaciente extends JFrame{
 		public Pantalla() {
 			setLayout(null);
 			
-			tituloJL.setBounds(240, 64, 256, 32);
-			nombreVentanaJL.setBounds(226, 96, 256, 32);
+			tituloJL.setBounds(170, 64, 320, 32);
+			tituloJL.setFont(new Font("Serif", Font.PLAIN, 22));
+			nombreVentanaJL.setBounds(180, 96, 320, 32);
+			nombreVentanaJL.setFont(new Font("Serif", Font.PLAIN, 18));
 			
 			codPacienteJL.setBounds(128, 160, 192, 32);
 			nomPacienteJL.setBounds(128, 192, 192, 32);
@@ -66,7 +69,7 @@ public class VentanaIngresoPaciente extends JFrame{
 			codPacienteJTF.setBounds(288, 165, 192, 24);
 			nomPacienteJPF.setBounds(288, 197, 192, 24);
 			
-			mensajeJL.setBounds(140, 245, 360, 24);
+			mensajeJL.setBounds(140, 245, 360, 32);
 			mensajeJL.setForeground(Color.RED);
 			
 			ingresarJB.setBounds(192, 304, 256, 32);
@@ -88,9 +91,8 @@ public class VentanaIngresoPaciente extends JFrame{
 						}
 						
 						resetearVentana();
-						mensajeJL.setText("");
 					} catch (Exception e) {
-						mensajeJL.setText(e.getMessage());
+						mensajeJL.setText("<html>" + e.getMessage() + "</html>");
 					}
 				}
 			});
@@ -117,9 +119,11 @@ public class VentanaIngresoPaciente extends JFrame{
 	private void resetearVentana() {
 		codPacienteJTF.setText("");
 		nomPacienteJPF.setText("");
+		mensajeJL.setText("");
 	}
 	
 	private void cerrarVentana() {
+		resetearVentana();
 		VentanaIngresoPaciente.getInstancia().setVisible(false);
 		VentanaIngreso.getInstancia().setVisible(true);
 	}
