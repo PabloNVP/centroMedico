@@ -3,6 +3,8 @@ package ventana.centroMedico;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -61,6 +63,51 @@ public class VentanaIngreso extends JFrame{
 			medicoJB.setBounds(192, 320, 256, 32);
 			volverJB.setBounds(192, 384, 256, 32);
 			
+			addWindowListener(new WindowListener() {
+
+				@Override
+				public void windowActivated(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowClosed(WindowEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+				@Override
+				public void windowClosing(WindowEvent e) {
+					cerrarVentana();
+							
+				}
+
+				@Override
+				public void windowDeactivated(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowDeiconified(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowIconified(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowOpened(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+							
+			});
+			
 			datosJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -88,8 +135,7 @@ public class VentanaIngreso extends JFrame{
 			volverJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					VentanaIngreso.getInstancia().setVisible(false);
-					VentanaInicio.getInstancia().setVisible(true);
+					cerrarVentana();
 				}
 			});
 			
@@ -100,5 +146,10 @@ public class VentanaIngreso extends JFrame{
 			add(medicoJB);
 			add(volverJB);
 		}
+	}
+	
+	public void cerrarVentana() {
+		VentanaIngreso.getInstancia().setVisible(false);
+		VentanaInicio.getInstancia().setVisible(true);
 	}
 }

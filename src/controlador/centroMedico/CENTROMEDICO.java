@@ -351,6 +351,7 @@ public class CENTROMEDICO {
 	 *  SEGURIDAD
 	 */
 	private static String encriptar(String mensaje) throws Exception {	
+		// Encripta el mensaje.
 		Key aesKey = new SecretKeySpec(CLAVE.getBytes(), 0, 16, "AES");
 
 		Cipher cipher = Cipher.getInstance("AES");
@@ -362,6 +363,7 @@ public class CENTROMEDICO {
 	}
 
 	private static String desencriptar(String mensaje) throws Exception {
+		// Desencripta el mensaje.
 		Key aesKey = new SecretKeySpec(CLAVE.getBytes(), 0, 16, "AES");
 
 		Cipher cipher = Cipher.getInstance("AES");

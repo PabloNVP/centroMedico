@@ -3,6 +3,8 @@ package ventana.centroMedico;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,7 +35,7 @@ public class VentanaInicio extends JFrame{
 		add(pantalla);
 		setLocationRelativeTo(null);
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	}
 	
 	public static VentanaInicio getInstancia() {
@@ -59,6 +61,50 @@ public class VentanaInicio extends JFrame{
 			informesJB.setBounds(192,  256, 256, 32);
 			salirJB.setBounds(192, 320, 256, 32);
 			
+			addWindowListener(new WindowListener() {
+
+				@Override
+				public void windowActivated(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowClosed(WindowEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+				@Override
+				public void windowClosing(WindowEvent e) {
+					cerrarVentana();
+				}
+
+				@Override
+				public void windowDeactivated(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowDeiconified(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowIconified(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowOpened(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+							
+			});
+			
 			ingresarJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -78,14 +124,7 @@ public class VentanaInicio extends JFrame{
 			salirJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					VentanaIngreso.getInstancia().dispose();
-					VentanaIngresoPaciente.getInstancia().dispose();
-					VentanaIngresoSituacion.getInstancia().dispose();
-					VentanaIngresoMedico.getInstancia().dispose();
-					VentanaInformes.getInstancia().dispose();
-					VentanaInformesPacientesXMedico.getInstancia().dispose();
-					VentanaInformesEnfermedadesXMedico.getInstancia().dispose();
-					VentanaInicio.getInstancia().dispose();
+					cerrarVentana();
 				}
 			});
 			
@@ -95,5 +134,16 @@ public class VentanaInicio extends JFrame{
 			add(informesJB);
 			add(salirJB);
 		}
+	}
+	
+	private void cerrarVentana() {
+		VentanaIngreso.getInstancia().dispose();
+		VentanaIngresoPaciente.getInstancia().dispose();
+		VentanaIngresoSituacion.getInstancia().dispose();
+		VentanaIngresoMedico.getInstancia().dispose();
+		VentanaInformes.getInstancia().dispose();
+		VentanaInformesPacientesXMedico.getInstancia().dispose();
+		VentanaInformesEnfermedadesXMedico.getInstancia().dispose();
+		VentanaInicio.getInstancia().dispose();
 	}
 }

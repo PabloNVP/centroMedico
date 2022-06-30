@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
@@ -76,6 +78,50 @@ public class VentanaInformesPacientesXMedico extends JFrame{
 			buscarJB.setBounds(420, 123, 128, 32);
 			volverJB.setBounds(192,  412, 256, 32);
 
+			addWindowListener(new WindowListener() {
+
+				@Override
+				public void windowActivated(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowClosed(WindowEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+				@Override
+				public void windowClosing(WindowEvent e) {
+					cerrarVentana();
+				}
+
+				@Override
+				public void windowDeactivated(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowDeiconified(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowIconified(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowOpened(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+							
+			});
+			
 			buscarJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent event) {
@@ -100,9 +146,7 @@ public class VentanaInformesPacientesXMedico extends JFrame{
 			volverJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					resetearVentana();
-					VentanaInformesPacientesXMedico.getInstancia().setVisible(false);
-					VentanaInformes.getInstancia().setVisible(true);
+					cerrarVentana();
 				}
 			});
 			
@@ -121,5 +165,11 @@ public class VentanaInformesPacientesXMedico extends JFrame{
 		contenidoDLM.clear();
 		codMedicoJTF.setText("");
 		mensajeJL.setText("");
+	}
+	
+	public void cerrarVentana() {
+		resetearVentana();
+		VentanaInformesPacientesXMedico.getInstancia().setVisible(false);
+		VentanaInformes.getInstancia().setVisible(true);
 	}
 }

@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -61,6 +63,50 @@ public class VentanaInformes extends JFrame{
 			enfermedadesMedicoJB.setBounds(162,  256, 304, 32);
 			volverJB.setBounds(162, 320, 304, 32);
 			
+			addWindowListener(new WindowListener() {
+
+				@Override
+				public void windowActivated(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowClosed(WindowEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+				@Override
+				public void windowClosing(WindowEvent e) {
+					cerrarVentana();
+				}
+
+				@Override
+				public void windowDeactivated(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowDeiconified(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowIconified(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowOpened(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+							
+			});
+			
 			listarPacientesJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -80,8 +126,7 @@ public class VentanaInformes extends JFrame{
 			volverJB.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					VentanaInformes.getInstancia().setVisible(false);
-					VentanaInicio.getInstancia().setVisible(true);
+					cerrarVentana();
 				}
 			});
 			
@@ -91,5 +136,10 @@ public class VentanaInformes extends JFrame{
 			add(enfermedadesMedicoJB);
 			add(volverJB);
 		}
+	}
+	
+	private void cerrarVentana() {
+		VentanaInformes.getInstancia().setVisible(false);
+		VentanaInicio.getInstancia().setVisible(true);
 	}
 }

@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -31,6 +33,9 @@ public class VentanaIngresoSituacion extends JFrame{
 	private JLabel codMedicoJL = new JLabel("Codigo del medico:");
 	private JLabel sitPacienteJL = new JLabel("Diagnostico del paciente:");
 	private JLabel mensajeJL = new JLabel("");
+	private JLabel codMedicoAyuda = new JLabel("?");
+	private JLabel codPacienteAyuda = new JLabel("?");
+	private JLabel sitPacienteAyuda = new JLabel("?");
 	private JTextField codPacienteJTF = new JTextField();
 	private JTextField codMedicoJTF = new JTextField();
 	private JTextArea sitPacienteJTA = new JTextArea(5, 4);
@@ -80,8 +85,71 @@ public class VentanaIngresoSituacion extends JFrame{
 			mensajeJL.setBounds(140, 300, 400, 32);
 			mensajeJL.setForeground(Color.RED);
 			
+			codPacienteAyuda.setBounds(490, 168, 16, 16);
+			codPacienteAyuda.setToolTipText(CENTROMEDICO.COD_PACIENTE_AYUDA);
+			codPacienteAyuda.setBackground(Color.LIGHT_GRAY);
+			codPacienteAyuda.setHorizontalAlignment(JLabel.CENTER);
+			codPacienteAyuda.setOpaque(true);
+			
+			codMedicoAyuda.setBounds(490, 200, 16, 16);
+			codMedicoAyuda.setToolTipText(CENTROMEDICO.COD_MEDICO_AYUDA);
+			codMedicoAyuda.setBackground(Color.LIGHT_GRAY);
+			codMedicoAyuda.setHorizontalAlignment(JLabel.CENTER);
+			codMedicoAyuda.setOpaque(true);
+			
+			sitPacienteAyuda.setBounds(490, 250, 16, 16);
+			sitPacienteAyuda.setToolTipText(CENTROMEDICO.SIT_PACIENTE_AYUDA);
+			sitPacienteAyuda.setBackground(Color.LIGHT_GRAY);
+			sitPacienteAyuda.setHorizontalAlignment(JLabel.CENTER);
+			sitPacienteAyuda.setOpaque(true);
+			
 			ingresarJB.setBounds(192, 340, 256, 32);
 			volverJB.setBounds(192,  388, 256, 32);
+			
+			addWindowListener(new WindowListener() {
+
+				@Override
+				public void windowActivated(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowClosed(WindowEvent e) {
+					// TODO Auto-generated method stub
+				}
+
+				@Override
+				public void windowClosing(WindowEvent e) {
+					cerrarVentana();
+							
+				}
+
+				@Override
+				public void windowDeactivated(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowDeiconified(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowIconified(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void windowOpened(WindowEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+							
+			});
 
 			ingresarJB.addActionListener(new ActionListener() {
 				@Override
@@ -120,6 +188,9 @@ public class VentanaIngresoSituacion extends JFrame{
 			add(codMedicoJTF);
 			add(sitPacienteJSP);
 			add(mensajeJL);
+			add(codPacienteAyuda);
+			add(codMedicoAyuda);
+			add(sitPacienteAyuda);
 			add(tituloJL);
 			add(nombreVentanaJL);
 			add(ingresarJB);
